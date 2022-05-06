@@ -1,5 +1,13 @@
 ## 角灰的文本处理工具
 
+下载并安装依赖：
+
+```shell
+git clone https://github.com/MiuGod0126/nmt_data_tools.git
+cd nmt_data_tools
+pip install -r requirements.txt
+```
+
 ### 1.中文jieba**分词**，与⭐多进程分词
 
 ```shell
@@ -35,7 +43,7 @@ python my_tools/dict2vocab.py $infile $outfile
 python my_tools/dict2vocab.py data/dict.zh.txt data/vocab.zh
 ```
 
-### 3.**lang id过滤**
+### 3.⭐**lang id过滤**
 
 使用fasttext
 
@@ -66,15 +74,26 @@ python my_tools/process_xml.py data/xml/bgzh/val.bg-zh.bg.xml data/
 #write to data/val.bg-zh.bg.txt success.
 ```
 
-#### 4.2 提取含xml的文件夹
-
-
+#### 4.2 ⭐提取含xml的文件夹
 
 ```
-目录：
+############### input ############### ：
+data/xml
+├── bgzh
+│   ├── val.bg-zh.bg.xml
+│   └── val.bg-zh.zh.xml
+└── ruzh
+    ├── val.ru-zh.ru.xml
+    └── val.ru-zh.zh.xm
+############### output ############### ：
+xml_out/
+├── bgzh
+│   ├── val.bg-zh.bg.txt
+│   └── val.bg-zh.zh.txt
+└── ruzh
+    ├── val.ru-zh.ru.txt
+    └── val.ru-zh.zh.txt
 ```
-
-
 
 ```shell
 # 1.command:
@@ -82,24 +101,9 @@ bash my_tools/process_xml_folder.sh <infolder> <outfolder>
 
 # 2.example:
 bash my_tools/process_xml_folder.sh data/xml/ xml_out
-
-#result
-processing bgzh/val.bg-zh.bg.xml
-total 1000 lines.
-write to xml_out/bgzh\val.bg-zh.bg.txt success.
-processing bgzh/val.bg-zh.zh.xml
-total 1000 lines.
-write to xml_out/bgzh\val.bg-zh.zh.txt success.
-processing ruzh/val.ru-zh.ru.xml
-total 1000 lines.
-write to xml_out/ruzh\val.ru-zh.ru.txt success.
-processing ruzh/val.ru-zh.zh.xml
-total 1000 lines.
-write to xml_out/ruzh\val.ru-zh.zh.txt success.
-
 ```
 
-### 5.写入xml：
+### 5.⭐写入xml：
 
 ```shell
 # 1.生成xml
@@ -215,6 +219,22 @@ python my_tools/deduplicate_lines.py --workers $workers files > $outfile
 python my_tools/deduplicate_lines.py --workers 4 data/upsample.zh > data/dedup.zh
 wc data/dedup.zh
 # 493   499 48302 data/dedup.zh
+```
 
+### 12.⭐翻译数据处理
+
+以zh en为例进行数据处理：
+
+```shell
+bash preprocess.sh
+```
+
+### 13.后处理
+
+对英文detokenize+detruecase
+
+```shell
+# bash postprocess.sh <prefix>
+bash postprocess.sh data/zhen_bpe/train.bpe
 ```
 
