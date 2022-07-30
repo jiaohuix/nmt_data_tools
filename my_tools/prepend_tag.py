@@ -15,7 +15,7 @@ def write_file(res,file):
 def add_tag(lines,tag):
     res=[]
     for line in lines:
-        line=f"{tag.strip()} {line.strip()}\n"
+        line=f"<{tag.strip()}> {line.strip()}\n"
         res.append(line)
     return res
 
