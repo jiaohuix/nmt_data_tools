@@ -15,6 +15,9 @@ fast_align=fast_align/build
 TRAIN=train
 VALID=dev
 
+rm -rf $out_folder
+mkdir $out_folder
+
 if [ ! -d $fast_align ];then
   git clone https://github.com/clab/fast_align.git
   cd fast_align
@@ -32,9 +35,9 @@ for prefix in $TRAIN $VALID
   done
 
 # fast align
-$fast_align/fast_align -i $out_folder/merge.$src-$tgt -d -o -v > forward.align
-$fast_align/fast_align -i $out_folder/merge.$src-$tgt -d -o -v -r > reverse.align
-$fast_align/atools -i forward.align -j reverse.align -c grow-diag-final-and
+$fast_align/fast_align -i $out_folder/merge.$src-$tgt -d -o -v > $out_folder/forward.align
+$fast_align/fast_align -i $out_folder/merge.$src-$tgt -d -o -v -r > $out_folder/reverse.align
+$fast_align/atools -i $out_folder/forward.align -j $out_folder/reverse.align -c grow-diag-final-and >  $out_folder/$src-$tgt.align
 
 # extract dict
-python my_tools/extract_dict.py $out_folder/merge.$src-$tgt $src-$tgt.align dict.$src-$tgt $topk
+python my_tools/extract_dict.py $out_folder/merge.$src-$tgt $out_folder/$src-$tgt.align $out_folder/dict.$src-$tgt $topk

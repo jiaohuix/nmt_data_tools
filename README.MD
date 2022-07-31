@@ -238,3 +238,28 @@ bash preprocess.sh
 bash postprocess.sh data/zhen_bpe/train.bpe
 ```
 
+### 14.fast_align抽取词典
+
+```shell
+# 分词
+bash my_tools/cut.sh 4 data/train.zh data/train.tok.zh
+bash my_tools/cut.sh 4 data/dev.zh data/dev.tok.zh
+mv data/train.tok.zh data/train.zh
+mv data/dev.tok.zh data/dev.zh
+# 抽取词典 （data/fast_align/dict.zh-en）
+bash fast_align_dict.sh
+# 查看结果
+head -n 10 data/fast_align/dict.zh-en
+我们    we      148
+的      of      142
+的      the     120
+这个    the     100
+是      is      100
+，      and     94
+一个    a       84
+的      in      82
+我们    our     76
+可以    can     74
+```
+
+目前已经可以抽取词典，后续准备添加停用词过滤，然后清洗词典，或者检测并保留些实体词，就不放在抽取词典上了。
