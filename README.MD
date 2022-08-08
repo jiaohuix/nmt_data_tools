@@ -146,9 +146,15 @@ python my_tools/stream_preprocess.py data/whole.zh data/stream2.zh 2 zh
 
 ```shell
 # 1.python
-python my_tools/merge.py data/train.zh data/train.en data/outfile.txt
+# python {sys.argv[0]} <infile1> <infile2> <outfile> <sep> (space/tab)
+# 空格分隔
+python my_tools/merge.py data/train.zh data/train.en data/outfile.txt space
+# 制表符分割
+python my_tools/merge.py data/train.zh data/train.en data/outfile.txt tab
+
 # 2.shell
 paste data/train.zh data/train.en > data/outfile.txt
+# paste -d ' ' 空格分割不好用，默认\t
 ```
 
 #### 7.2 拆分
@@ -263,3 +269,22 @@ head -n 10 data/fast_align/dict.zh-en
 ```
 
 目前已经可以抽取词典，后续准备添加停用词过滤，然后清洗词典，或者检测并保留些实体词，就不放在抽取词典上了。
+
+### 15.RAS
+
+随机对齐替换。用词典将source的词典词按一定几率替换为其他语言的同义词。
+
+```
+python my_tools/replace_word_bilingual.py --langs de;en --dict-path dic --data-path data  --prefix train --num-repeat 1 --moses-detok --replace-prob 0.3 --vocab-size 1000
+
+tree:
+/dic
+	de-en.txt # de_word en_word \n (空格分隔)
+/data
+	train.src # <lang_id> src_text
+	train.tgt  # <lang_id> tgt_text
+```
+
+python nmt_data_tools/my_tools/replace_word_bilingual.py --langs de;en --dict-path dic --data-path data --num-repeat 1 --moses-detok --replace-prob 0.3 --vocab-size 1000
+
+**完整文档和demo参考[ras_sample](./ras_sample/README.md)**

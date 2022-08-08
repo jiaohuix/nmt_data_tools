@@ -1,3 +1,7 @@
 lxml
 jieaba
 fasttext
+tqdm
+subword-nmt
+wget
+sacremoses
