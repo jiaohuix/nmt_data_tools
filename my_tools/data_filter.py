@@ -38,7 +38,7 @@ def length_filter(text_pair_ls,low=1,up=200,ratio=1.5):
     print(f'length filter | [{len(new_pair)}/{len(text_pair_ls)}] samples retained, [{len(text_pair_ls)-len(new_pair)}/{len(text_pair_ls)}] were deleted.')
     return new_pair
 
-def lang_id_filter(text_pair_ls,model_path,src_lang='zh',tgt_lang='en',threshold=0.5,report_neg=False):
+def lang_id_filter(text_pair_ls,model_path,src_lang='zh',tgt_lang='en',threshold=None,report_neg=False):
     model=fasttext.load_model(model_path)
     new_pair=[]
     for pair in text_pair_ls:
@@ -48,9 +48,9 @@ def lang_id_filter(text_pair_ls,model_path,src_lang='zh',tgt_lang='en',threshold
         # src和tgt标签都要正确
         flag=True if all((labels[0]==src_lang,labels[1]==tgt_lang)) else False
         # 任一边置信度都要大于阈值
-        if any((scores[0]<threshold,scores[1]<threshold)):
-            flag=False
 
+        if (threshold is not None) and any((scores[0]<threshold,scores[1]<threshold)):
+            flag=False
         if flag:
             new_pair.append(pair)
 
@@ -68,7 +68,7 @@ if __name__ == '__main__':
     parser.add_argument('--tgt-lang',type=str,default='en')
     parser.add_argument('--in-prefix',type=str,default=None)
     parser.add_argument('--out-prefix',type=str,default=None)
-    parser.add_argument('--threshold',type=float,default=0.5)
+    parser.add_argument('--threshold',type=float,default=None)
     args = parser.parse_args()
 
     src_file, tgt_file=f"{args.in_prefix}.{args.src_lang}",f"{args.in_prefix}.{args.tgt_lang}"

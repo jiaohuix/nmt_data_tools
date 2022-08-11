@@ -22,6 +22,14 @@ bash my_tools/cut.sh 4 data/train.zh data/train.tok.zh
 # result: 啊额最后一站了，然后回到了大本营北京。=>啊 额 最后 一站 了 ， 然后 回到 了 大本营 北京 。
 ```
 
+新增泰语分分词：
+
+```shell
+bash my_tools/cut_th.sh  $workers src_file tgt_file
+```
+
+
+
 ### 2.**词表转换**
 
 json->vocab(paddle)->dict(fairseq)
@@ -288,3 +296,4 @@ tree:
 python nmt_data_tools/my_tools/replace_word_bilingual.py --langs de;en --dict-path dic --data-path data --num-repeat 1 --moses-detok --replace-prob 0.3 --vocab-size 1000
 
 **完整文档和demo参考[ras_sample](./ras_sample/README.md)**
+
