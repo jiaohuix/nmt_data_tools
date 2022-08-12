@@ -1,7 +1,7 @@
 #!/bin/sh
 
 #folder=../UN/zh_fr
-folder=data_zhfr
+folder=UN/zh_fr
 SRC=zh
 TRG=fr
 
@@ -31,40 +31,17 @@ TRAIN_TC=$SCRIPTS/recaser/train-truecaser.perl
 TC=$SCRIPTS/recaser/truecase.perl
 
 
-# merge un and ikcest
-cat $folder/train.un.$SRC $folder/train.ikcest.$SRC > $folder/train.$SRC
-cat $folder/train.un.$TRG $folder/train.ikcest.$TRG > $folder/train.$TRG
+# train valid split(ikcest),merge ikcest and un
+python my_tools/train_dev_split.py $SRC $TRG $folder/train.ikcest $folder/ $valid_num # train.lang/ dev.lang
+mv $folder/dev.$SRC  $folder/valid.$SRC && mv $folder/dev.$TRG  $folder/valid.$TRG
+mv $folder/train.$SRC $folder/train.1.$SRC && mv $folder/train.$TRG $folder/train.1.$TRG
 
+cat $folder/train.un.$SRC $folder/train.1.$SRC > $folder/train.$SRC
+cat $folder/train.un.$TRG $folder/train.1.$TRG > $folder/train.$TRG
 
-# train valid split
-echo  "-------------- train dev split --------------"
-if [ -e $folder/train.raw.$SRC ];then
-   cp  $folder/train.raw.$SRC  $folder/train.$SRC
-   cp  $folder/train.raw.$TRG  $folder/train.$TRG
-
-fi
-
-cp  $folder/train.$SRC  $folder/train.raw.$SRC
-cp  $folder/train.$TRG  $folder/train.raw.$TRG
 
 raw_lines=$(cat $folder/train.$SRC | wc -l )
 echo "raw lines: $raw_lines"
-
-
-head -n $[ $raw_lines-$split_lines ] $folder/train.$SRC > $folder/train.0.$SRC
-head -n $[ $raw_lines-$split_lines ] $folder/train.$TRG > $folder/train.0.$TRG
-tail -n $split_lines   $folder/train.$SRC > $folder/train.1.$SRC
-tail -n $split_lines   $folder/train.$TRG > $folder/train.1.$TRG
-
-python my_tools/train_dev_split.py $SRC $TRG $folder/train.1 $folder/ $valid_num
-mv $folder/dev.$SRC  $folder/valid.$SRC
-mv $folder/dev.$TRG  $folder/valid.$TRG
-mv $folder/train.$SRC $folder/train.1.$SRC
-mv $folder/train.$TRG $folder/train.1.$TRG
-cat $folder/train.0.$SRC $folder/train.1.$SRC > $folder/train.$SRC
-cat $folder/train.0.$TRG $folder/train.1.$TRG > $folder/train.$TRG
-rm  $folder/train.0.$SRC && rm $folder/train.1.$SRC
-rm  $folder/train.0.$TRG && rm $folder/train.1.$TRG
 
 # tokenize
 
@@ -85,20 +62,20 @@ for prefix in train valid  test.${SRC}_${TRG} test.${TRG}_${SRC} valid.un test.u
   done
 
 # deduplicate
-echo  "-------------- deduplicate --------------"
-wc $folder/train.$SRC
-paste  $folder/train.$SRC  $folder/train.$TRG > tmp.txt
-python my_tools/deduplicate_lines.py --workers 4 tmp.txt > tmp.dedup.txt
-
-cut -f 1 tmp.dedup.txt > $folder/train.dedup.$SRC
-cut -f 2 tmp.dedup.txt > $folder/train.dedup.$TRG
-
-rm tmp.txt tmp.dedup.txt
-wc $folder/train.dedup.$SRC
-
+#echo  "-------------- deduplicate --------------"
+#wc $folder/train.$SRC
+#paste  $folder/train.$SRC  $folder/train.$TRG > tmp.txt
+#python my_tools/deduplicate_lines.py --workers 4 tmp.txt > tmp.dedup.txt
+#
+#cut -f 1 tmp.dedup.txt > $folder/train.dedup.$SRC
+#cut -f 2 tmp.dedup.txt > $folder/train.dedup.$TRG
+#
+#rm tmp.txt tmp.dedup.txt
+#wc $folder/train.dedup.$SRC
+#
 
 # clean empty and long sentences, and sentences with high source-target ratio (training corpus only)
-perl $CLEAN -ratio $lengRatio $folder/train.dedup $SRC $TRG $folder/train.clean $lower $upper
+perl $CLEAN -ratio $lengRatio $folder/train.tok $SRC $TRG $folder/train.clean $lower $upper
 
 length_filt_lines=$(cat $folder/train.clean.$SRC | wc -l )
 echo "--------------[Length filter result]: Input sentences: $raw_lines  Output sentences:  $length_filt_lines !!!--------------"
@@ -230,21 +207,21 @@ python my_tools/vocab2dict.py $folder/vocab.$TRG $folder/dict.$TRG.txt
 
 # remove
 echo "--------------remove file--------------"
-for prefix in train valid  test.${SRC}_${TRG} test.${TRG}_${SRC} valid.un test.un
-  do
-      for mid in tok dedup clean tc id
-          do
-              if [ -e $folder/$prefix.$mid.$SRC ];then
-                 echo "RM $folder/$prefix.$mid.$SRC"
-                 rm $folder/$prefix.$mid.$SRC
-              fi
-              if [ -e  $folder/$prefix.$mid.$TRG ];then
-                 echo "RM $folder/$prefix.$mid.$TRG"
-                 rm $folder/$prefix.$mid.$TRG
-              fi
-          done
+# for prefix in train valid  test.${SRC}_${TRG} test.${TRG}_${SRC} valid.un test.un
+#   do
+#       for mid in tok dedup clean tc id
+#           do
+#               if [ -e $folder/$prefix.$mid.$SRC ];then
+#                  echo "RM $folder/$prefix.$mid.$SRC"
+#                  rm $folder/$prefix.$mid.$SRC
+#               fi
+#               if [ -e  $folder/$prefix.$mid.$TRG ];then
+#                  echo "RM $folder/$prefix.$mid.$TRG"
+#                  rm $folder/$prefix.$mid.$TRG
+#               fi
+#           done
 
-  done
+#   done
 
 # mv
 out_folder=$folder/${SRC}_${TRG}_bpe

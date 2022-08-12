@@ -10,6 +10,14 @@ pip install -r requirements.txt
 
 ### 1.中文jieba**分词**，与⭐多进程分词
 
+新增：单个py脚本支持中文zh、泰文th的多进程分词。
+
+```
+python my_tools/cut_multi.py <infile> <outfile> <workers> <lang>(zh/th)
+```
+
+以前的，可以不用看了。
+
 ```shell
 # 1.单进程
 python my_tools/cut.py src_file tgt_file
