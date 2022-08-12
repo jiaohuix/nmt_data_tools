@@ -6,6 +6,7 @@
 '''
 import os
 import sys
+import numpy as np
 import pandas as pd
 from tqdm import tqdm
 def read_file(file):
@@ -18,20 +19,20 @@ def write_file(res,file):
         f.write(''.join(res))
     print(f'write to {file} success.')
 
-def update_step_info(ratio=None,step_info={}):
-    if ratio is None :
-        step_info = {"1.5": 0, "2": 0, "2.5": 0, "3": 0}
-    else:
-        if ratio<=1.5: step_info["1.5"]+=1
-        elif 1.5<ratio<2: step_info["2"]+=1
-        elif 2.5<ratio<3: step_info["2.5"]+=1
-        elif 3<ratio: step_info["3"]+=1
+def get_step_info(info):
+    ratio=np.array(info["ratio"])
+    step_info = {"1.5": 0, "2": 0, "2.5": 0, "3": 0}
+    for k in step_info:
+        step_key=float(k)
+        step_val=(ratio>step_key).sum()
+        step_info[k]=step_val
     return step_info
+
+
 
 
 def check(srclines,tgtlines,upper=175,ratio=1.5):
     info={"ratio":[],"src_len":[],"tgt_len":[]}
-    step_info=update_step_info()
     num_out_up,num_out_ratio=0,0
     res_src_trash, res_tgt_trash = [], []
     for src,tgt in tqdm(zip(srclines,tgtlines)):
@@ -54,11 +55,11 @@ def check(srclines,tgtlines,upper=175,ratio=1.5):
         info["ratio"].append(r)
         info["src_len"].append(a)
         info["tgt_len"].append(b)
-        step_info=update_step_info(ratio,step_info)
 
     df=pd.DataFrame(data=info)
     print(df.describe())
     print(f"{num_out_up} lines len > {upper}, {num_out_ratio} lines ratio > {ratio}.")
+    step_info=get_step_info(info)
     print(f"step info: {step_info}")
 
     return res_src_trash,res_tgt_trash

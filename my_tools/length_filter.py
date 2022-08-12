@@ -29,19 +29,17 @@ def write_file(res,file):
         f.write(''.join(res))
     print(f'write to {file} success.')
 
-def update_step_info(ratio=None,step_info={}):
-    if ratio is None :
-        step_info = {"1.5": 0, "2": 0, "2.5": 0, "3": 0}
-    else:
-        if ratio<=1.5: step_info["1.5"]+=1
-        elif 1.5<ratio<2: step_info["2"]+=1
-        elif 2.5<ratio<3: step_info["2.5"]+=1
-        elif 3<ratio: step_info["3"]+=1
+def get_step_info(info):
+    ratio=np.array(info["ratio"])
+    step_info = {"1.5": 0, "2": 0, "2.5": 0, "3": 0}
+    for k in step_info:
+        step_key=float(k)
+        step_val=(ratio>step_key).sum()
+        step_info[k]=step_val
     return step_info
 
 def length_filter(text_pair_ls,args):
     info={"ratio":[],"src_len":[],"tgt_len":[]}
-    step_info=update_step_info()
     selected_pair, trash_pair=[], []
     for pair in text_pair_ls:
         linea,lineb=pair[0],pair[1]
@@ -62,13 +60,14 @@ def length_filter(text_pair_ls,args):
         info["ratio"].append(ratio)
         info["src_len"].append(len_a)
         info["tgt_len"].append(len_b)
-        step_info=update_step_info(ratio,step_info)
 
     print(f'length filter | [{len(selected_pair)}/{len(text_pair_ls)}] samples retained, [{len(trash_pair)}/{len(text_pair_ls)}] were deleted.')
 
     df=pd.DataFrame(data=info)
     print(df.describe())
+    step_info=get_step_info(info)
     print(f"step info: {step_info}")
+
     return selected_pair,trash_pair
 
 
