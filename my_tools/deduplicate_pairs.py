@@ -28,7 +28,7 @@ def main(in_prefix,src_lang,tgt_lang,workers=1):
         open(src_out_file, "w", encoding="utf-8") as fw_src, open(tgt_out_file, "w", encoding="utf-8") as fw_tgt:
         pool = Pool(processes=workers)
         paris=zip(fr_src,fr_tgt)
-        results=pool.imap(get_hashes_and_pairs,paris,chunksize=1000)
+        results=pool.imap_unordered(get_hashes_and_pairs,paris,chunksize=1000)
         for i,(hash,sent_pairs) in tqdm(enumerate(results)):
             if hash not in seen:
                 seen.add(hash)

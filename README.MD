@@ -233,7 +233,7 @@ write to data/shuffle.en success.
 
 ### 11.去重
 
-**新增： 双语去重。（有序）**
+**新增： 双语去重。（无序，比有序快25%）**
 
 ```shell
 # python my_tools/deduplicate_pairs.py  <in_prefix> <src_lang> <tgt_lang>  <workers>
