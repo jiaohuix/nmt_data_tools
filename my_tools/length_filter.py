@@ -7,6 +7,7 @@
 import sys
 import pandas as pd
 from tqdm import tqdm
+import numpy as np
 import argparse
 
 def read_text_pair(src_file,tgt_file):
