@@ -45,7 +45,7 @@ echo "raw lines: $raw_lines"
 
 # tokenize
 
-echo "--------------tokenize --------------"
+echo "--------------------- tokenize ---------------------"
 for prefix in train valid  test.${SRC}_${TRG} test.${TRG}_${SRC} valid.un test.un
   do
     if [ -e $folder/$prefix.$SRC ];then
@@ -78,7 +78,7 @@ for prefix in train valid  test.${SRC}_${TRG} test.${TRG}_${SRC} valid.un test.u
 perl $CLEAN -ratio $lengRatio $folder/train.tok $SRC $TRG $folder/train.clean $lower $upper
 
 length_filt_lines=$(cat $folder/train.clean.$SRC | wc -l )
-echo "--------------[Length filter result]: Input sentences: $raw_lines  Output sentences:  $length_filt_lines !!!--------------"
+echo "--------------[Length filter result]: [$length_filt_lines/$raw_lines]. --------------"
 
 
 ## train truecaser,truecase则会学习训练数据，判断句子中的名字、地点等，选择合适的大小写形式，提升翻译时候的准确性,中文一般不用
@@ -96,6 +96,7 @@ for prefix in train
  done
 
 # apply truecaser (dev/test files)
+echo "-------------- truecase --------------"
 for prefix in  valid  test.${SRC}_${TRG} test.${TRG}_${SRC} valid.un test.un
  do
 
@@ -110,7 +111,6 @@ for prefix in  valid  test.${SRC}_${TRG} test.${TRG}_${SRC} valid.un test.un
 done
 
 tc_lines=$(cat $folder/train.tc.$SRC | wc -l )
-echo "--------------[Truecaser result]: Input sentences: $length_filt_lines  Output sentences:   $tc_lines!!!--------------" #不变的！
 
 
 # lang id filter，只过滤train
@@ -120,12 +120,12 @@ fi
 
 python my_tools/data_filter.py --src-lang $SRC --tgt-lang $TRG --in-prefix $folder/train.tc --out-prefix $folder/train.id
 lang_filt_lines=$(cat $folder/train.id.$SRC | wc -l )
-echo "--------------[lang_filt result]: Input sentences: $length_filt_lines  Output sentences:   $lang_filt_lines!!!--------------"
+echo "--------------[lang_filt result]: [$lang_filt_lines/$length_filt_lines]. --------------"
 mv $folder/train.id.$SRC $folder/train.tc.$SRC
 mv $folder/train.id.$TRG $folder/train.tc.$TRG
 
 
-echo "--------------learn bpe--------------"
+echo "--------------------- learn bpe ---------------------"
 if [ ! -d model ];then
   mkdir model
 fi
@@ -143,7 +143,7 @@ if [ -e $folder/mono.tc.$TRG ];then
 fi
 
 if [ $joint_bpe == 1 ];then
-  echo "------- learn joint bpe ------- "
+  echo "--------------------- learn joint bpe ---------------------"
   cat $folder/tmp.$TRG >> $folder/tmp.$SRC
   cp $folder/tmp.$SRC $folder/tmp.$TRG
 fi
@@ -159,7 +159,7 @@ elif [ $joint_bpe == 1 ]; then
 fi
 
 # apply BPE
-echo "--------------apply BPE--------------"
+echo "--------------------- apply bpe ---------------------"
 for prefix in train valid  test.${SRC}_${TRG} test.${TRG}_${SRC} valid.un test.un
  do
    if [ -e $folder/$prefix.$SRC ];then
@@ -174,7 +174,7 @@ for prefix in train valid  test.${SRC}_${TRG} test.${TRG}_${SRC} valid.un test.u
 
 
 #build network dictionary
-echo "--------------build network dictionary--------------"
+echo "--------------------- build network dictionary ---------------------"
 cat $folder/train.bpe.$SRC > $folder/tmp.$SRC
 if [ -e $folder/mono.bpe.$SRC ];then
   cat $folder/mono.bpe.$SRC >> $folder/tmp.$SRC
@@ -186,7 +186,7 @@ if [ -e $folder/mono.bpe.$TRG ];then
 fi
 
 if [ $joint_bpe == 1 ];then
-    echo "------- build joint vocab ------- "
+    echo "--------------------- build joint vocab ---------------------"
   cat $folder/tmp.$TRG >> $folder/tmp.$SRC
   cp $folder/tmp.$SRC $folder/tmp.$TRG
 fi
@@ -206,7 +206,7 @@ python my_tools/vocab2dict.py $folder/vocab.$TRG $folder/dict.$TRG.txt
 
 
 # remove
-echo "--------------remove file--------------"
+echo "--------------------- remove file ---------------------"
 # for prefix in train valid  test.${SRC}_${TRG} test.${TRG}_${SRC} valid.un test.un
 #   do
 #       for mid in tok dedup clean tc id

@@ -18,7 +18,7 @@ def main():
                 for w in words_in:
                     w=w.strip()
                     if len(w)==0:continue
-                    if (w>u"\ue000"):continue
+                    # if (w>u"\ue000"):continue
                     if w not in word_freqs:
                         word_freqs[w] = 0
                     word_freqs[w] += 1
@@ -30,12 +30,11 @@ def main():
         sorted_freqs = [freqs[ii] for ii in sorted_idx[::-1]]
 
         worddict = OrderedDict()
-        # worddict['<EOS>'] = 0
-        # worddict['<GO>'] = 1
-        # worddict['<UNK>'] = 2
-        worddict['<EOS>'] = sorted_freqs[0]+10
-        worddict['<GO>'] = sorted_freqs[0]+9
-        worddict['<UNK>'] = sorted_freqs[0]+8
+
+        worddict['<s>'] = sorted_freqs[0]+10
+        worddict['<pad>'] = sorted_freqs[0]+9
+        worddict['</s>'] = sorted_freqs[0]+8
+        worddict['<unk>'] = sorted_freqs[0]+7
         # FIXME We shouldn't assume <EOS>, <GO>, and <UNK> aren't BPE subwords.
         for word,freq in zip(sorted_words,sorted_freqs):
             worddict[word] = freq

@@ -10,7 +10,7 @@ pip install -r requirements.txt
 
 ### 1.中文jieba**分词**，与⭐多进程分词
 
-**新增：单个py脚本支持中文zh、泰文th的多进程分词。**
+**新增：单个py脚本支持中文zh、泰文th的多进程分词。   22/8/12**
 
 ```
 python my_tools/cut_multi.py <infile> <outfile> <workers> <lang>(zh/th)
@@ -42,20 +42,25 @@ bash my_tools/cut_th.sh  $workers src_file tgt_file
 
 json->vocab(paddle)->dict(fairseq)
 
+**新增：1. json2dict，不再需要从vocab中转，且能保留词频信息。 2.json2vocab和json2dict加入min_freq，参数，支持按照频率过滤词表  22/8/12**
+
 ```shell
 # 1.json 转 paddle vocab
-python my_tools/json2vocab.py $infile $outfile
-#example:
+#python my_tools/json2vocab.py $infile $outfile $min_freq(optional)
 python my_tools/json2vocab.py data/train.bpe.zh.json data/vocab.zh
 
-# 2.paddle vocab 转 fairseq dict
-python my_tools/vocab2dict.py $infile $outfile
-#example:
+
+# 2.json 转 fairseq dict
+#python my_tools/json2dict.py $infile $outfile $min_freq(optional)
+
+
+# 3.paddle vocab 转 fairseq dict
+# python my_tools/vocab2dict.py $infile $outfile $min_freq(optional)
 python my_tools/vocab2dict.py data/vocab.zh data/dict.zh.txt
 
-# 3.fairseq dict 转  paddle vocab
-python my_tools/dict2vocab.py $infile $outfile
-#example:
+# 4.fairseq dict 转  paddle vocab
+# python my_tools/dict2vocab.py $infile $outfile
+
 python my_tools/dict2vocab.py data/dict.zh.txt data/vocab.zh
 ```
 

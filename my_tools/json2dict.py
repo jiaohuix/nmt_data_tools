@@ -2,7 +2,6 @@ import os
 import sys
 import json
 
-
 def read_json(file):
     with open(file,'r',encoding='utf-8') as f:
         data=json.load(f)
@@ -13,13 +12,11 @@ def write_file(res,file):
         f.write(''.join(res))
     print(f'write to {file} success.')
 
-
-def json2vocab(js_data,min_freq=0):
-    keys = list(js_data.keys())
-    freqs = list(js_data.values())
-    res = [f"{key}\n" for key, freq in zip(keys, freqs) if freq > min_freq]
+def json2dict(js_data,min_freq):
+    keys = list(js_data.keys())[4:]
+    freqs = list(js_data.values())[4:]
+    res = [f"{key} {freq}\n" for key, freq in zip(keys, freqs) if freq > min_freq]
     return res
-
 
 
 if __name__ == '__main__':
@@ -31,5 +28,5 @@ if __name__ == '__main__':
         min_freq = int(sys.argv[3])
 
     js_data=read_json(infile)
-    res=json2vocab(js_data,min_freq)
+    res=json2dict(js_data,min_freq)
     write_file(res,outfile)
