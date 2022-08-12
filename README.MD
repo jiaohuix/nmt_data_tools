@@ -10,7 +10,7 @@ pip install -r requirements.txt
 
 ### 1.中文jieba**分词**，与⭐多进程分词
 
-新增：单个py脚本支持中文zh、泰文th的多进程分词。
+**新增：单个py脚本支持中文zh、泰文th的多进程分词。**
 
 ```
 python my_tools/cut_multi.py <infile> <outfile> <workers> <lang>(zh/th)
@@ -232,6 +232,16 @@ write to data/shuffle.en success.
 ```
 
 ### 11.去重
+
+**新增： 双语去重。（有序）**
+
+```shell
+# python my_tools/deduplicate_pairs.py  <in_prefix> <src_lang> <tgt_lang>  <workers>
+# 会默认写到in_prefix.dedup.lang里,example:
+python my_tools/deduplicate_pairs.py  data/train zh en  4
+```
+
+old：单语多文件去重 。（无序）
 
 ```shell
 # 1.command:
