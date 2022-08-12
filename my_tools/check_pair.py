@@ -1,3 +1,9 @@
+'''
+功能：检查长度信息，
+与length_filter区别：
+    1.length_filter必须写入范围内，可选范围外； check_pair只能可选写入范围外。
+    2.check 非bpe语料对， 用于token后，bpe前
+'''
 import os
 import sys
 import pandas as pd
@@ -12,33 +18,39 @@ def write_file(res,file):
         f.write(''.join(res))
     print(f'write to {file} success.')
 
-def check(srclines,tgtlines,upper=175,ratio=1.5):
-    up_max=upper
-    ratio_max=ratio
-    num_max_u=0
-    num_max_r=0
+def update_step_info(ratio=None,step_info={}):
+    if ratio is None :
+        step_info = {"1.5": 0, "2": 0, "2.5": 0, "3": 0}
+    else:
+        if ratio<=1.5: step_info["1.5"]+=1
+        elif 1.5<ratio<2: step_info["2"]+=1
+        elif 2.5<ratio<3: step_info["2.5"]+=1
+        elif 3<ratio: step_info["3"]+=1
+    return step_info
 
-    ratios=[]
-    src_len=[]
-    tgt_len=[]
-    res_src=[]
-    res_tgt=[]
+
+def check(srclines,tgtlines,upper=175,ratio=1.5):
+    info={"ratio":[],"src_len":[],"tgt_len":[]}
+    step_info=update_step_info()
+    num_out_up,num_out_ratio=0,0
     for src,tgt in tqdm(zip(srclines,tgtlines)):
         src_words,tgt_words =src.strip().split(),tgt.strip().split()
         a,b=len(src_words),len(tgt_words)
         r= max(a,b)/min(a,b)
-        ratios.append(r)
-        if r>ratio_max:
-            num_max_r+=1
-            res_src.append(src)
-            res_tgt.append(tgt)
-        if max(a,b)>up_max: num_max_u+=1
-        src_len.append(a)
-        tgt_len.append(b)
+        if max(a,b)>upper: num_out_up+=1
+        if r>ratio: num_out_ratio+=1
 
-    df=pd.DataFrame(data={"ratios":ratios,"src_len":src_len,"tgt_len":tgt_len})
+        # static info
+        info["ratio"].append(r)
+        info["src_len"].append(a)
+        info["tgt_len"].append(b)
+        step_info=update_step_info(ratio,step_info)
+
+    df=pd.DataFrame(data=info)
     print(df.describe())
-    print(f"{num_max_u} lines len > {up_max},{num_max_r} lines ratio > {ratio_max}.")
+    print(f"{num_out_up} lines len > {upper}, {num_out_ratio} lines ratio > {ratio}.")
+    print(f"step info: {step_info}")
+
     return res_src,res_tgt
 
 if __name__ == '__main__':
@@ -59,7 +71,7 @@ if __name__ == '__main__':
     tgtlines=read_file(tgtfile)
     res_src, res_tgt= check(srclines,tgtlines,upper,ratio)
     if w:
-        srcfile_out = f"{inprefix}.check.{src_lang}"
-        tgtfile_out = f"{inprefix}.check.{tgt_lang}"
+        srcfile_out = f"{inprefix}.trash.{src_lang}"
+        tgtfile_out = f"{inprefix}.trash.{tgt_lang}"
         write_file(res_src,srcfile_out)
         write_file(res_tgt,tgtfile_out)

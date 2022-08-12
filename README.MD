@@ -64,7 +64,9 @@ python my_tools/vocab2dict.py data/vocab.zh data/dict.zh.txt
 python my_tools/dict2vocab.py data/dict.zh.txt data/vocab.zh
 ```
 
-### 3.⭐**lang id过滤**
+### 3.**过滤**
+
+1.**⭐语言标识过滤**
 
 使用fasttext
 
@@ -79,6 +81,23 @@ python ./my_tools/data_filter.py --src-lang zh --tgt-lang en --in-prefix data/tr
 # result: lang id filter| [967/1000] samples retained, [33/1000] were deleted.
 
 ```
+
+**2.长度过滤**
+
+替代moses的clean-corpus，打印统计信息。
+
+```shell
+# 长度检测 (用于tokenize后，bpe前)
+# python my_tools/check_pair.py <in_prefix> <SRC> <TRG>  <upper> <ratio> <write_trash>(0/1)
+python my_tools/check_pair.py data/train.tok zh th  1 175 1.5 0
+# 默认write_trash=0，只打印，不写trash；0时会把范围外的异常数据写入 <inprefix.trash.lang>
+
+# 长度过滤 (替代moses的clean-corpus；可以使用在bpe之后，先获得词表，再按不同的参数过滤数据)
+python my_tools/length_filter.py --src-lang zh --tgt-lang th --in-prefix  data/train.bpe --out-prefix data/train.clean --low 1 --up 200 --ratio 1.5 --remove-bpe --wt 
+# --remove-bpe可选，开启后判断长度时删掉@@ ，不影响写入； --wt可选，效果同check_pair的write_trash
+```
+
+
 
 ### 4.批量**提取xml**和sgm
 
