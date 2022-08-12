@@ -33,12 +33,22 @@ def check(srclines,tgtlines,upper=175,ratio=1.5):
     info={"ratio":[],"src_len":[],"tgt_len":[]}
     step_info=update_step_info()
     num_out_up,num_out_ratio=0,0
+    res_src_trash, res_tgt_trash = [], []
     for src,tgt in tqdm(zip(srclines,tgtlines)):
         src_words,tgt_words =src.strip().split(),tgt.strip().split()
         a,b=len(src_words),len(tgt_words)
         r= max(a,b)/min(a,b)
-        if max(a,b)>upper: num_out_up+=1
-        if r>ratio: num_out_ratio+=1
+        flag=True
+        if max(a,b)>upper:
+            num_out_up+=1
+            flag=False
+        if r>ratio:
+            num_out_ratio+=1
+            flag=False
+
+        if not flag:
+            res_src_trash.append(src)
+            res_tgt_trash.append(tgt)
 
         # static info
         info["ratio"].append(r)
@@ -51,7 +61,7 @@ def check(srclines,tgtlines,upper=175,ratio=1.5):
     print(f"{num_out_up} lines len > {upper}, {num_out_ratio} lines ratio > {ratio}.")
     print(f"step info: {step_info}")
 
-    return res_src,res_tgt
+    return res_src_trash,res_tgt_trash
 
 if __name__ == '__main__':
     assert len(sys.argv)>=6,f"usage: python {sys.argv[0]} <inprefix> <src_lang> <tgt_lang> <upper> <ratio> <write>(0/1, optional)"
@@ -69,9 +79,9 @@ if __name__ == '__main__':
 
     srclines=read_file(srcfile)
     tgtlines=read_file(tgtfile)
-    res_src, res_tgt= check(srclines,tgtlines,upper,ratio)
+    res_src_trash, res_tgt_trash= check(srclines,tgtlines,upper,ratio)
     if w:
         srcfile_out = f"{inprefix}.trash.{src_lang}"
         tgtfile_out = f"{inprefix}.trash.{tgt_lang}"
-        write_file(res_src,srcfile_out)
-        write_file(res_tgt,tgtfile_out)
+        write_file(res_src_trash,srcfile_out)
+        write_file(res_tgt_trash,tgtfile_out)

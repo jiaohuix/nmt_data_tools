@@ -89,7 +89,7 @@ python ./my_tools/data_filter.py --src-lang zh --tgt-lang en --in-prefix data/tr
 ```shell
 # 长度检测 (用于tokenize后，bpe前)
 # python my_tools/check_pair.py <in_prefix> <SRC> <TRG>  <upper> <ratio> <write_trash>(0/1)
-python my_tools/check_pair.py data/train.tok zh th  1 175 1.5 0
+python my_tools/check_pair.py data/train.tok zh th  175 1.5 0
 # 默认write_trash=0，只打印，不写trash；0时会把范围外的异常数据写入 <inprefix.trash.lang>
 
 # 长度过滤 (替代moses的clean-corpus；可以使用在bpe之后，先获得词表，再按不同的参数过滤数据)
