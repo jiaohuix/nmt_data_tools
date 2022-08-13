@@ -35,8 +35,8 @@ python my_tools/train_dev_split.py $SRC $TRG $folder/train.ikcest $folder/ $vali
 mv $folder/dev.$SRC  $folder/valid.$SRC && mv $folder/dev.$TRG  $folder/valid.$TRG
 mv $folder/train.$SRC $folder/train.1.$SRC && mv $folder/train.$TRG $folder/train.1.$TRG
 
-cat $folder/train.un.$SRC $folder/train.1.$SRC > $folder/train.$SRC
-cat $folder/train.un.$TRG $folder/train.1.$TRG > $folder/train.$TRG
+cat $folder/train.un.$SRC $folder/train.qy.$SRC  $folder/train.1.$SRC > $folder/train.$SRC
+cat $folder/train.un.$TRG $folder/train.qy.$TRG $folder/train.1.$TRG > $folder/train.$TRG
 
 
 raw_lines=$(cat $folder/train.$SRC | wc -l )
@@ -45,7 +45,7 @@ echo "raw lines: $raw_lines"
 # tokenize
 
 echo "--------------tokenize --------------"
-for prefix in train valid  test.${SRC}_${TRG} test.${TRG}_${SRC} valid.un test.un
+for prefix in train valid  test.${SRC}_${TRG} test.${TRG}_${SRC} valid.un test.un valid.qy
   do
     if [ -e $folder/$prefix.$SRC ];then
        echo "tokenize $prefix.$SRC"
@@ -100,7 +100,7 @@ for prefix in train
  done
 
 # apply truecaser (dev/test files)
-for prefix in  valid  test.${SRC}_${TRG} test.${TRG}_${SRC} valid.un test.un
+for prefix in  valid  test.${SRC}_${TRG} test.${TRG}_${SRC} valid.un test.un valid.qy
  do
 
     if [ -e $folder/$prefix.tok.$SRC ];then
@@ -164,7 +164,7 @@ fi
 
 # apply BPE
 echo "--------------apply BPE--------------"
-for prefix in train valid  test.${SRC}_${TRG} test.${TRG}_${SRC} valid.un test.un
+for prefix in train valid  test.${SRC}_${TRG} test.${TRG}_${SRC} valid.un test.un valid.qy
  do
    if [ -e $folder/$prefix.$SRC ];then
       echo "bpe $prefix.$SRC"
@@ -212,7 +212,7 @@ python my_tools/json2dict.py $folder/tmp.$TRG.json $folder/dict.$TRG.txt
 
 # remove
 echo "--------------remove file--------------"
-# for prefix in train valid  test.${SRC}_${TRG} test.${TRG}_${SRC} valid.un test.un
+# for prefix in train valid  test.${SRC}_${TRG} test.${TRG}_${SRC} valid.un test.un valid.qy
 #   do
 #       for mid in tok dedup clean tc id
 #           do
