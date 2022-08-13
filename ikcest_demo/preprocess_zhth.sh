@@ -67,6 +67,12 @@ for prefix in train valid mono  test.${SRC}_${TRG} test.${TRG}_${SRC}
     fi
   done
 
+
+
+echo  "-------------- chinese error/low_freq words filter --------------"
+python my_tools//zh_abnormal_filter.py --zh-lang $SRC --other-lang $TRG --in-prefix $folder/train.tok --out-prefix  $folder/train.clean --threshold 0.45 --min-freq 20 --wt
+mv $folder/train.clean.$SRC $folder/train.tok.$SRC && mv $folder/train.clean.$TRG $folder/train.tok.$TRG
+
 # deduplicate
 #echo  "-------------- deduplicate --------------"
 #wc $folder/train.$SRC
@@ -82,7 +88,8 @@ for prefix in train valid mono  test.${SRC}_${TRG} test.${TRG}_${SRC}
 
 # clean empty and long sentences, and sentences with high source-target ratio (training corpus only)
 #$mosesdecoder/scripts/training/clean-corpus-n.perl -ratio $lengRatio $folder/train.dedup $SRC $TRG $folder/train.clean $lower $upper
-# 只检测长度统计数据，不在预处理里过滤长度
+
+# do length filter after bpe, check statistic info first
 python my_tools/check_pair.py $folder/train.tok $SRC $TRG  $upper $lengRatio 0
 
 
@@ -132,6 +139,8 @@ if [ $joint_bpe == 0 ];then
 elif [ $joint_bpe == 1 ]; then
   cp model/$SRC.bpe model/$TRG.bpe
 fi
+
+
 # joint bpe
 # cat $folder/train.tc.$SRC $folder/train.tc.$TRG  | $subword_nmt/learn_bpe.py -s $src_bpe_operations > model/$SRC.bpe
 

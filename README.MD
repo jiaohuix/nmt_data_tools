@@ -1,4 +1,6 @@
-## 角灰的文本处理工具
+
+
+## 角灰的文本工具箱
 
 下载并安装依赖：
 
@@ -353,4 +355,71 @@ tree:
 python nmt_data_tools/my_tools/replace_word_bilingual.py --langs de;en --dict-path dic --data-path data --num-repeat 1 --moses-detok --replace-prob 0.3 --vocab-size 1000
 
 **完整文档和demo参考[ras_sample](./ras_sample/README.md)**
+
+### 16.⭐罕见词、乱码过滤（中文）
+
+1.对于部分乱码，编码成gbk后会报错，如此可以剔除一部分：
+
+```python
+def check_is_encode_error(string):
+    try:
+        string.encode('gbk')
+    except UnicodeEncodeError:
+        return True
+    return False
+# eg：s="硂或ㄓ и籔羆琌畉˙ぇ换"
+# print(check_is_encode_error(s)) # True
+
+```
+
+2.对于不会报错的罕见词，可以在文本进行分词后用unicode编码区分中文和其他字符，大多数情况是符号或者日语，所以用日语的unicode来区分是不是正常的词。
+
+```python
+def is_all_japanese(strs):
+    for _char in strs:
+        if not '\u0800' <= _char <= '\u4e00':
+            return False
+    return True
+
+# 如得到下面奇怪的词表：
+'''
+['ㄛ', '①', '⼈', '┅', '◎', '●', 'ㄧ', '〈', '〖', '≥', '②', '\u200b', '•', '⼀', 'ㄓ', '〇', 'ㄚ', '③', '⻔', '⼝', 'Ⅲ', '④', '⑤', '│', '∩', 'ぃ', '⼦', 'ส', '์', 'ร', 'ぎ', '㖊', 'ㄩ', '≤', '⾕', 'ぐ', '⊿', 'Ⅳ', 'ย', '⾯', 'ヶ', '∣', 'ㄤ', '⊙', '▲', 'ㄍ', 'ㄞ', '⾃', '⾮', '※', 'จ', 'す', 'れ', '✘', 'レ', '⼩', 'ㄈ', 'ิ', '⽤', '⑦', '⑥', '❤', 'ㄇ', 'ㄐ', '⽽', 'ㄘ', 'ㄗ', '⼴', '⼊', '‰', '⼼', '⼯', '▓', '┕', '⾛', '〜', '䴕', 'Ⅵ', '⽣', 'い', 'น', 'ゅ', 'え', 'ㄅ', 'ㄎ', '∕', '㎡', 'ㄥ', 'わ', 'Ⅴ', '✔', 'ไ', 'พ', 'ค', 'ต', 'ม', 'า', 'อ', 'ซ', 'เ', '㖞', '⽿', '⽶', '⻄', '⽬', '⽂', 'ฮ', 'ว', 'ง', 'ุ', '้', 'が', 'ば', 'ヴ', 'か', '╩', '㓥', '㎝', '═', 'オ', '㈱', '┣', '⑩', 'ㄖ', 'ㄌ', 'ㄆ', 'ボ', 'ヘ', 'も', 'デ', 'ㄨ', 'ㄉ', 'ㄠ', 'ァ', 'む', 'ェ', 'ゴ', '√', '⽞', '⼜', '⾜', 'Ⅷ', 'Ⅶ', '∨', '≠', '⻅', '⾄', '∪', 'Ⅸ', 'ะ', 'ื', 'ั', 'ท', 'ี', '่', '⑧', 'ㄙ', '⼤', 'ト', 'ッ', 'プ', 'グ', 'イ', 'ン', 'を', '⾸', '⺟', '⾏', '・', '⽉', '⽴', 'ㄒ', 'ㄢ', 'の', 'ど', 'こ', 'ん', 'に', 'ち', '╰', '╭', '″', 'せ']
+'''
+```
+
+​	找出含这些词的句子，这部分句子有很大概率是无意义的句子（全是乱码），也有可能只是包含些特殊符号，我们对这些嫌疑句进行打分，规则如下：
+
+
+$$
+si=(w_{1},w_{2},...,w_{n}) 
+$$
+
+$$
+Score(i)=\frac{1}{n}\sum_{k=0}^{k=n}I(freq_{k}<100)* \frac{（100-freq_{k})}{100}
+$$
+​	对于第i个句子si，有n个word。句子分数Score(i)为，n个word的分数求平均。指示函数I当词频小于100时为1，  对于词频freq>100的词，分数为0；对于freq<100的词，分数为归一化的100-freq，这样词频低就分数高；若乱码多，基本上分数很容易超过0.5,俺把超过0.45的都当初乱码丢掉了。对于score<0.45的嫌疑句，俺按规则删掉些乱码词后放回原语料。
+
+```python
+# python my_tools/zh_abnormal_filter.py --zh-lang zh --other-lang th --in-prefix data_zhth/train.tok --out-prefix data_zhth/train.clean --threshold 0.45 --min-freq 20 --wt
+# 用在tokenize之后，bpe前
+# --wt可选，加了后会把嫌疑句存到out_prefix.update.zh 和out_prefix.trash.zh
+'''
+update: (score<0.45)
+
+Score: [0.140], Sentence: [◎ 我 都 会 等 你
+]Score: [0.213], Sentence: [◎ 在 那些 我 无法 忘怀 的
+]Score: [0.210], Sentence: [◎ 所有 熟悉 的
+]Score: [0.280], Sentence: [◎ 老 地方
+]Score: [0.210], Sentence: [◎ 等 着 你
+
+trash: (score>0.45)
+
+Score: [0.829], Sentence: [※ 涴 汊 唒 ＃ § 庈 部 塑 毽 斯 剟 覂 ※ 扥 酗 盛 赽 わ 晒 赵塑 §
+]Score: [0.475], Sentence: [395 ) 若 吾 起舞 吾 が 舞 え ば
+]Score: [0.790], Sentence: [惕 К - 凌 岆 勤祥 れ
+]Score: [0.784], Sentence: [膻寿 炵 ㄛ 梗 温 婓 陑 奻
+]Score: [0.741], Sentence: [辣 茩 蝠 霜 ﹛ QQ ㄩ 31946467
+]Score: [0.823], Sentence: [祥 岆 珨 跺 艘 善 か 谣艺 羹 憩霜谙 厄腔 伎 寤 橾 啄
+'''
+```
 

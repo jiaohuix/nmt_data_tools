@@ -1,6 +1,6 @@
 #!/bin/sh
 
-folder=UN/zh_ru
+folder=$1
 SRC=zh
 TRG=ru
 
@@ -12,7 +12,7 @@ joint_bpe=0
 # length filter
 lower=1
 upper=256
-lengRatio=2.6
+lengRatio=2.5
 
 valid_num=1000
 split_lines=100000
@@ -74,10 +74,15 @@ for prefix in train valid  test.${SRC}_${TRG} test.${TRG}_${SRC} valid.un test.u
 #
 
 # clean empty and long sentences, and sentences with high source-target ratio (training corpus only)
-perl $CLEAN -ratio $lengRatio $folder/train.tok $SRC $TRG $folder/train.clean $lower $upper
+#perl $CLEAN -ratio $lengRatio $folder/train.tok $SRC $TRG $folder/train.clean $lower $upper
+#length_filt_lines=$(cat $folder/train.clean.$SRC | wc -l )
+#echo "--------------[Length filter result]: Input sentences: $raw_lines  Output sentences:  $length_filt_lines !!!--------------"
 
-length_filt_lines=$(cat $folder/train.clean.$SRC | wc -l )
-echo "--------------[Length filter result]: Input sentences: $raw_lines  Output sentences:  $length_filt_lines !!!--------------"
+# do length filter after bpe, check statistic info first
+python my_tools/check_pair.py $folder/train.tok $SRC $TRG  $upper $lengRatio 0
+mv $folder/train.tok.$SRC $folder/train.clean.$SRC && mv $folder/train.tok.$TRG $folder/train.clean.$TRG
+
+
 
 
 ## train truecaser,truecase则会学习训练数据，判断句子中的名字、地点等，选择合适的大小写形式，提升翻译时候的准确性,中文一般不用
@@ -199,9 +204,10 @@ rm $folder/tmp.$SRC && rm $folder/tmp.$TRG
 python my_tools/json2vocab.py $folder/tmp.$SRC.json $folder/vocab.$SRC
 python my_tools/json2vocab.py $folder/tmp.$TRG.json $folder/vocab.$TRG
 
+
 # build fairseq dict
-python my_tools/vocab2dict.py $folder/vocab.$SRC $folder/dict.$SRC.txt
-python my_tools/vocab2dict.py $folder/vocab.$TRG $folder/dict.$TRG.txt
+python my_tools/json2dict.py $folder/tmp.$SRC.json $folder/dict.$SRC.txt
+python my_tools/json2dict.py $folder/tmp.$TRG.json $folder/dict.$TRG.txt
 
 
 # remove
