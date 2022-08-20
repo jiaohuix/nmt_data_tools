@@ -40,11 +40,8 @@ echo  "-------------- train dev split --------------"
 # train valid split(ikcest),merge ikcest and opensubtitles
 python my_tools/train_dev_split.py $SRC $TRG $folder/train.ikcest $folder/ $valid_num # train.lang/ dev.lang
 mv $folder/dev.$SRC  $folder/valid.$SRC && mv $folder/dev.$TRG  $folder/valid.$TRG
-mv $folder/train.$SRC $folder/train.1.$SRC && mv $folder/train.$TRG $folder/train.1.$TRG
-
-cat $folder/train.clean_sub.$SRC $folder/train.1.$SRC > $folder/train.$SRC
-cat $folder/train.clean_sub.$TRG $folder/train.1.$TRG > $folder/train.$TRG
-
+cat $folder/train.clean_sub.$SRC  >> $folder/train.$SRC
+cat $folder/train.clean_sub.$TRG  >> $folder/train.$TRG
 
 raw_lines=$(cat $folder/train.$SRC | wc -l )
 echo "raw lines: $raw_lines"
@@ -126,7 +123,7 @@ fi
 if [ $joint_bpe == 1 ];then
   echo "------- learn joint bpe ------- "
   cat $folder/tmp.$TRG >> $folder/tmp.$SRC
-  cp $folder/tmp.$SRC $folder/tmp.$TRG
+#  cp $folder/tmp.$SRC $folder/tmp.$TRG
 fi
 
 wc $folder/tmp.$SRC
@@ -174,12 +171,18 @@ fi
 if [ $joint_bpe == 1 ];then
     echo "------- build joint vocab ------- "
   cat $folder/tmp.$TRG >> $folder/tmp.$SRC
-  cp $folder/tmp.$SRC $folder/tmp.$TRG
+#  cp $folder/tmp.$SRC $folder/tmp.$TRG
 fi
 
 #cat $folder/train.bpe.$SRC   > $folder/tmp.$SRC
 #cat $folder/train.bpe.$TRG $folder/mono.bpe.$TRG  > $folder/tmp.$TRG
-python my_tools/build_dictionary.py $folder/tmp.$SRC $folder/tmp.$TRG
+python my_tools/build_dictionary.py $folder/tmp.$SRC
+# tgt
+if [ $joint_bpe == 0 ];then
+  python my_tools/build_dictionary.py  $folder/tmp.$TRG
+elif [ $joint_bpe == 1 ]; then
+  cp $folder/tmp.$SRC.json $folder/tmp.$TRG.json
+fi
 rm $folder/tmp.$SRC && rm $folder/tmp.$TRG
 
 # build paddle vocab
