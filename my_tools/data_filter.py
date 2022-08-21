@@ -27,7 +27,7 @@ def write_text_pair(text_pair_ls,out_src_file,out_tgt_file):
 
 def write_file(res,file):
     with open(file,'w',encoding='utf-8') as f:
-        f.write(''.join(res))
+        f.writelines(res)
     print(f'write to {file} success, total {len(res)} lines.')
 
 def length_filter(text_pair_ls,low=1,up=200,ratio=1.5):

@@ -16,8 +16,8 @@ def read_file(file):
 
 def write_file(res,file):
     with open(file,'w',encoding='utf-8') as f:
-        f.write(''.join(res))
-    print(f'write to {file} success.')
+        f.writelines(res)
+    print(f'write to {file} success, total {len(res)} lines.')
 
 def get_step_info(info):
     ratio=np.array(info["ratio"])

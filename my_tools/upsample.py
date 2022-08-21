@@ -4,8 +4,8 @@ import numpy as np
 from tqdm import tqdm
 def write_file(res,file):
     with open(file,'w',encoding='utf-8') as f:
-        f.write(''.join(res))
-    print(f'write to {file} success.')
+        f.writelines(res)
+    print(f'write to {file} success, total {len(res)} lines.')
 
 def read_text_pair(src_file,tgt_file):
     res=[]

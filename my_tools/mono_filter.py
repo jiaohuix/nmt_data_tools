@@ -5,19 +5,19 @@ import argparse
 
 def read_text(src_file):
     with open(src_file,'r',encoding='utf-8') as f:
-        lines=[line.strip() for line in f.readlines()]
+        lines=f.readlines()
     return lines
 
 def write_file(res,file):
     with open(file,'w',encoding='utf-8') as f:
-        f.write('\n'.join(res)+"\n")
-    print(f'write to {file} success.')
+        f.writelines(res)
+    print(f'write to {file} success, total {len(res)} lines.')
 
 def lang_id_filter(lines,model_path,lang='zh',threshold=0.5):
     model=fasttext.load_model(model_path)
     new_lines=[]
     for line in lines:
-        labels,scores=model.predict([line.lower()])
+        labels,scores=model.predict([line.strip().lower()])
 
         label=[label[0].replace('__label__','') for label in labels][0]
         score=[float(score) for score in scores][0]

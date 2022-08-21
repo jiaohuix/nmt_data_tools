@@ -10,9 +10,8 @@ def read_json(file):
 
 def write_file(res,file):
     with open(file,'w',encoding='utf-8') as f:
-        f.write(''.join(res))
-    print(f'write to {file} success.')
-
+        f.writelines(res)
+    print(f'write to {file} success, total {len(res)} lines.')
 
 def json2vocab(js_data,min_freq=0):
     keys = list(js_data.keys())
