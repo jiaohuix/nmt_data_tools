@@ -18,7 +18,6 @@ def main():
                 for w in words_in:
                     w=w.strip()
                     if len(w)==0:continue
-                    # if (w>u"\ue000"):continue
                     if w not in word_freqs:
                         word_freqs[w] = 0
                     word_freqs[w] += 1

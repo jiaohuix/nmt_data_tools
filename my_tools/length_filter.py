@@ -11,24 +11,31 @@ import numpy as np
 import argparse
 
 def read_text_pair(src_file,tgt_file):
-    res=[]
+    print("Reading text pair...")
     with open(src_file,'r',encoding='utf-8') as fs,open(tgt_file,'r',encoding='utf-8') as ft:
-        for line1,line2 in tqdm(zip(fs.readlines(),ft.readlines())):
-            line1=line1.strip()
-            line2=line2.strip()
-            res.append([line1,line2])
+        res = list(zip(fs.readlines(),ft.readlines()))
     return res
 
+# def write_text_pair(text_pair_ls,out_src_file,out_tgt_file):
+#     print("Writing text pair...")
+#     src_pairs,tgt_pairs = list(zip(*text_pair_ls))
+#     del text_pair_ls
+#     write_file(src_pairs,out_src_file)
+#     del src_pairs
+#     write_file(tgt_pairs,out_tgt_file)
+#     del tgt_pairs
+
 def write_text_pair(text_pair_ls,out_src_file,out_tgt_file):
-    src_pairs=[pair[0]+'\n' for pair in text_pair_ls]
-    tgt_pairs=[pair[1]+'\n' for pair in text_pair_ls]
+    src_pairs=[pair[0] for pair in text_pair_ls]
+    tgt_pairs=[pair[1] for pair in text_pair_ls]
     write_file(src_pairs,out_src_file)
     write_file(tgt_pairs,out_tgt_file)
+
 
 def write_file(res,file):
     with open(file,'w',encoding='utf-8') as f:
         f.write(''.join(res))
-    print(f'write to {file} success.')
+    print(f'write to {file} success, total {len(res)} lines.')
 
 def get_step_info(info):
     ratio=np.array(info["ratio"])
@@ -40,10 +47,11 @@ def get_step_info(info):
     return step_info
 
 def length_filter(text_pair_ls,args):
+    print("Length filtering...")
     info={"ratio":[],"src_len":[],"tgt_len":[]}
     selected_pair, trash_pair=[], []
-    for pair in text_pair_ls:
-        linea,lineb=pair[0],pair[1]
+    for pair in tqdm(text_pair_ls):
+        linea,lineb=pair[0].strip(),pair[1].strip()
         len_a,len_b=len(linea.split()),len(lineb.split())
         if args.remove_bpe:
             len_a=len(linea.replace("@@ ","").split())
