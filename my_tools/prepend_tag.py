@@ -20,6 +20,7 @@ def add_tag(lines,tag):
     return res
 
 if __name__ == '__main__':
+    assert len(sys.argv)>=3,f"usage: python {sys.argv[0]} <infile> <outfile> tag"
     infile=sys.argv[1]
     outfile=sys.argv[2]
     tag=sys.argv[3]
