@@ -24,7 +24,7 @@ for folder in ` ls $root `
         for file in `ls $root/$folder`
         do
           if [ -e $root/$folder/$file ];then
-              if  [ "${file##*.}"x = "xml"x ] ||  [ "${file##*.}"x = "sgm"x ];then
+              if  [ "${file##*.}"x = "xml"x ] ||  [ "${file##*.}"x = "sgm"x ] ||  [ "${file##*.}"x = "tmx"x ];then
                 # 核心操作
                 echo "processing $folder/$file"
                 # 递归创建文件夹
