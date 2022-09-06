@@ -31,7 +31,7 @@ def xml2text(infile, outfolder, parent_label='DOC', text_label='seg'):
     text_ls = [text.strip() + '\n' for text in text_ls]
     print(f'total {len(text_ls)} lines.')
     # write
-    name = os.path.basename(infile).replace('xml', 'txt').replace('sgm', 'txt')
+    name = os.path.basename(infile).replace('xml', 'txt').replace('sgm', 'txt').replace('tmx', 'txt')
     outfile = os.path.join(outfolder, name)
     write_file(text_ls, outfile)
 
