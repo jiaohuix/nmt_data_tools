@@ -257,7 +257,7 @@ write to data\upsample.en success.
 
 #### 9.2 下采样
 
-直接使用8数据划分，取dev.lang作为下采样结果
+直接使用第**8**节数据划分，取dev.lang作为下采样结果
 
 ### 10.打乱平行语料
 
