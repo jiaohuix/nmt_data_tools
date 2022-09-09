@@ -274,7 +274,23 @@ write to data/shuffle.en success.
 
 ### 11.去重
 
-**新增： 双语去重。（无序，比有序快25%）**
+**新增2：从语料1中，删除语料2中的数据：**
+
+```shell
+# python my_tools/drop_specific_pairs.py <src_lang> <tgt_lang> <main_prefix> <drop_prefix>  <workers>
+# 从main_prefix.lang中删除drop_prefix.lang中的数据，写入到main_prefix.drop.lang
+
+# eg:
+python my_tools/drop_specific_pairs.py zh en data/train data/dev 4
+
+#Corpus pair to be deleted: [493] pairs.
+#500it [00:00, 4761.99it/s]
+#Delete the specified language is complete! Total [0/500] paris.
+
+# 其中train和dev数据相同，所以train全被删了，结果train.drop.lang为空
+```
+
+**新增1： 双语去重。（无序，比有序快25%）**
 
 ```shell
 # python my_tools/deduplicate_pairs.py  <in_prefix> <src_lang> <tgt_lang>  <workers>
