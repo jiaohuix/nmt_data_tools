@@ -10,6 +10,30 @@ cd nmt_data_tools
 pip install -r requirements.txt
 ```
 
+## 目录：
+
+- [1. 多进程分词](#1)
+- [2. 词表相关](#2)
+- [3. 文本过滤](#3)
+- [4. 提取xml ](#4)
+- [5. 写入xml ](#5)
+- [6. 流式处理 ](#6)
+- [7. 合并拆分语料(列)](#7)
+- [8. 数据划分 ](#8)
+- [9. 上下采样 ](#9)
+- [10. 打乱文本 ](#10)
+- [11. 去重 ](#11)
+- [12. nmt数据处理 ](# 12)
+- [13. moses后处理 ](#13)
+- [14.fast_align抽取词典 ](#14)
+- [15. 随即对齐替换(RAS) ](#15)
+- [16.中文过滤 ](#16)
+- [17.ngram纠错 ](#17)
+
+
+
+<a id="1"></a>
+
 ### 1.中文jieba**分词**，与⭐多进程分词
 
 **新增：单个py脚本支持中文zh、泰文th的多进程分词。   22/8/12**
@@ -40,9 +64,28 @@ bash my_tools/cut_th.sh  $workers src_file tgt_file
 
 
 
-### 2.**词表转换**
+<a id="2"></a>
+
+### 2.**词表相关**
 
 json->vocab(paddle)->dict(fairseq)
+
+**新增2： 多进程获取词典，速度快了2倍多。 22/9/13**
+
+```shell
+# 单进程
+python my_tools/build_dictionary.py $infile
+# 多进程
+bash my_tools/build_dictionary_paral.sh $workers $infile
+# 输出：infile.json
+
+#eg:  wiki.train.tokens, 1801350 lines
+time python my_tools/build_dictionary.py wiki.train.tokens
+# real    0m40.372s
+time bash my_tools/build_dictionary_paral.sh 4 wiki.train.tokens
+#real    0m18.201s
+
+```
 
 **新增：1. json2dict，不再需要从vocab中转，且能保留词频信息。 2.json2vocab和json2dict加入min_freq，参数，支持按照频率过滤词表  22/8/12**
 
@@ -66,7 +109,9 @@ python my_tools/vocab2dict.py data/vocab.zh data/dict.zh.txt
 python my_tools/dict2vocab.py data/dict.zh.txt data/vocab.zh
 ```
 
-### 3.**过滤**
+<a id="3"></a>
+
+### 3.**文本过滤**
 
 1.**⭐语言标识过滤**
 
@@ -116,6 +161,8 @@ step info: {'1.5': 494654, '2': 194131, '2.5': 118475, '3': 65409}
 
 
 
+<a id="4"></a>
+
 ### 4.批量**提取xml**和sgm
 
 #### 4.1提取单个xml：
@@ -160,6 +207,10 @@ bash my_tools/process_xml_folder.sh <infolder> <outfolder>
 bash my_tools/process_xml_folder.sh data/xml/ xml_out
 ```
 
+
+
+<a id="5"></a>
+
 ### 5.⭐写入xml：
 
 ```shell
@@ -176,7 +227,12 @@ python my_tools/write_xml.py data/train.en data/result.xml
       <seg id="1">So this is our last stop, and we came back to our headquarter in Beijing.</seg>
 ```
 
+
+
+<a id="6"></a>
+
 ### 6.流式输入处理
+
 如：
 ```
 大
@@ -196,6 +252,10 @@ python my_tools/stream_preprocess.py data/stream.zh data/whole.zh 1 zh
 # 整句->流式（data/stream2.zh）
 python my_tools/stream_preprocess.py data/whole.zh data/stream2.zh 2 zh
 ```
+
+
+
+<a id="7"></a>
 
 ### 7.合并、拆分语料
 
@@ -223,6 +283,10 @@ cut -f 1 data/outfile.txt > data/cut.zh
 cut -f 2 data/outfile.txt > data/cut.en
 ```
 
+
+
+<a id="8"></a>
+
 ### 8.数据划分
 
 划分训练和验证集
@@ -239,6 +303,10 @@ write to data\train.en success.
 write to data\dev.zh success.
 write to data\dev.en success.
 ```
+
+
+
+<a id="9"></a>
 
 ### 9.上、下采样
 
@@ -259,6 +327,10 @@ write to data\upsample.en success.
 
 直接使用第**8**节数据划分，取dev.lang作为下采样结果
 
+
+
+<a id="10"></a>
+
 ### 10.打乱平行语料
 
 ```shell
@@ -271,6 +343,10 @@ python my_tools/shuffle_pair.py zh en data/train data/
 write to data/shuffle.zh success.
 write to data/shuffle.en success.
 ```
+
+
+
+<a id="11"></a>
 
 ### 11.去重
 
@@ -310,6 +386,10 @@ wc data/dedup.zh
 # 493   499 48302 data/dedup.zh
 ```
 
+
+
+<a id="12"></a>
+
 ### 12.⭐翻译数据处理
 
 以zh en为例进行数据处理：
@@ -317,6 +397,10 @@ wc data/dedup.zh
 ```shell
 bash preprocess.sh
 ```
+
+
+
+<a id="13"></a>
 
 ### 13.后处理
 
@@ -326,6 +410,10 @@ bash preprocess.sh
 # bash postprocess.sh <prefix>
 bash postprocess.sh data/zhen_bpe/train.bpe
 ```
+
+
+
+<a id="14"></a>
 
 ### 14.fast_align抽取词典
 
@@ -353,6 +441,10 @@ head -n 10 data/fast_align/dict.zh-en
 
 目前已经可以抽取词典，后续准备添加停用词过滤，然后清洗词典，或者检测并保留些实体词，就不放在抽取词典上了。
 
+
+
+<a id="15"></a>
+
 ### 15.RAS
 
 随机对齐替换。用词典将source的词典词按一定几率替换为其他语言的同义词。
@@ -371,6 +463,10 @@ tree:
 python nmt_data_tools/my_tools/replace_word_bilingual.py --langs de;en --dict-path dic --data-path data --num-repeat 1 --moses-detok --replace-prob 0.3 --vocab-size 1000
 
 **完整文档和demo参考[ras_sample](./ras_sample/README.md)**
+
+
+
+<a id="16"></a>
 
 ### 16.⭐罕见词、乱码过滤（中文）
 
@@ -436,6 +532,72 @@ Score: [0.829], Sentence: [※ 涴 汊 唒 ＃ § 庈 部 塑 毽 斯 剟 覂 �
 ]Score: [0.784], Sentence: [膻寿 炵 ㄛ 梗 温 婓 陑 奻
 ]Score: [0.741], Sentence: [辣 茩 蝠 霜 ﹛ QQ ㄩ 31946467
 ]Score: [0.823], Sentence: [祥 岆 珨 跺 艘 善 か 谣艺 羹 憩霜谙 厄腔 伎 寤 橾 啄
+'''
+```
+
+
+
+<a id="17"></a>
+
+### 17.ngram语言模型
+
+ 22/9/13
+
+- 最近有遇到需要处理几句相似但存在错误的句子(ocr输出)，使用深度学习模型的纠正方法似乎不是很work, 如[pycorrector](https://github.com/shibing624/pycorrector)
+
+  ```
+  # eg1: 昨天早上扔垃圾的时候\t昨天早上扔圾的时候\t咋天早上扔垃圾的时候
+  ```
+
+  [![vjXPiR.png](https://s1.ax1x.com/2022/09/13/vjXPiR.png)](https://imgse.com/i/vjXPiR)
+
+- 我尝试使用以word为单位的ngram模型为句子打分,效果较差,原因是词粒度太大, 打分时容易出现OOV的词,如词表有"雨伞",而要为"我 去 拿 伞" 和 "我 去 拿 平" 两句句子打分时, 因为"伞" 不单独出现在词表, 所以分数一样
+
+- 最后我用以char为单位的ngram模型对句子进行打分,  缓解了OOV的问题, 并且句子得分很合理,见以下demo:
+
+- TODO: 1.添加用新语料更新模型的功能, 将从新的领域语料得到的ngram的count提高, 从而让得分对领域词更敏感. 2. 以候选句中得分最高的为模板, 找到错误后替换为别的句子中对应词, 取得分高的从而达到纠错的效果.
+
+```python
+# eg1: 昨天早上扔垃圾的时候\t昨天早上扔圾的时候\t咋天早上扔垃圾的时候
+'''
+Sentence: 昨天早上扔垃圾的时候, Score: -12.5425 √
+Sentence: 昨天早上扔圾的时候, Score: -13.5297
+Sentence: 咋天早上扔垃圾的时候, Score: -14.132
+'''
+# eg2: 
+'''
+ Sentence: 他似乎总是缺乏一位掌门人应有的清晰思路和价值判断, Score: -4.171 √
+ Sentence: 他似夫总似缺乏一位掌门人应有的清晰思路和价紫判断, Score: -10.397
+'''
+# eg3:
+'''
+Sentence: 被送到医院后确认死亡, Score: -10.2888 √
+Sentence: 破送到医院后确认死亡, Score: -12.5591
+'''
+```
+
+使用如下：
+
+```python
+from my_tools.ngram_char import nGramChar
+# build model
+model = nGramChar(n_gram=3)
+# train model
+model.train_ngram(text_file="cnews/cnews.test.txt")
+# save model
+model.save_model(path="./")
+# load model
+model.load_model(path="./")
+# score
+s1 = '他似乎总是缺乏一位掌门人应有的清晰思路和价值判断'
+s2 = '他似夫总似缺乏一位掌门人应有的清晰思路和价紫判断'
+prob1 = model.sentence_logprob(sentence=s1)
+prob2 = model.sentence_logprob(sentence=s2)
+print(f"Sentence: {s1}, Score: {prob1}")
+print(f"Sentence: {s2}, Score: {prob2}")
+'''
+Sentence: 他似乎总是缺乏一位掌门人应有的清晰思路和价值判断, Score: -4.171
+Sentence: 他似夫总似缺乏一位掌门人应有的清晰思路和价紫判断, Score: -10.397
 '''
 ```
 
