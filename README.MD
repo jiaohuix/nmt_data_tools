@@ -29,8 +29,7 @@ pip install -r requirements.txt
 - [15. 随即对齐替换(RAS) ](#15)
 - [16.中文乱码过滤 ](#16)
 - [17.ngram纠错 ](#17)
-
-
+- [18. MUSE多语言词典](#18)
 
 <a id="1"></a>
 
@@ -599,5 +598,26 @@ print(f"Sentence: {s2}, Score: {prob2}")
 Sentence: 他似乎总是缺乏一位掌门人应有的清晰思路和价值判断, Score: -4.171
 Sentence: 他似夫总似缺乏一位掌门人应有的清晰思路和价紫判断, Score: -10.397
 '''
+```
+
+
+
+<a id="18"></a>
+
+### 18. MUSE多语言词典
+
+22/9/26
+
+说明： muse的词典是x-en.txt的，以英文为中心，本节利用lang1-en.txt和lang2-en.txt 两个到英文的词典，获取lang1-lang2.txt的词典。
+
+```shell
+# eg：获取俄中词典
+## 1. 下载俄英，中英词典
+wget https://dl.fbaipublicfiles.com/arrival/dictionaries/ru-en.txt
+wget https://dl.fbaipublicfiles.com/arrival/dictionaries/zh-en.txt
+
+## 2.转俄中
+python my_tools/get_pivot_dict.py ru-en.txt zh-en.txt
+# write to ./ru-zh.txt success, total 13852 lines.
 ```
 
