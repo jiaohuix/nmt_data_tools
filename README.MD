@@ -30,6 +30,7 @@ pip install -r requirements.txt
 - [16.中文乱码过滤 ](#16)
 - [17.ngram纠错 ](#17)
 - [18. MUSE多语言词典](#18)
+- [19.Annoy加速相似向量查找](#19)
 
 <a id="1"></a>
 
@@ -619,5 +620,58 @@ wget https://dl.fbaipublicfiles.com/arrival/dictionaries/zh-en.txt
 ## 2.转俄中
 python my_tools/get_pivot_dict.py ru-en.txt zh-en.txt
 # write to ./ru-zh.txt success, total 13852 lines.
+```
+
+
+
+<a id="19"></a>
+
+### 19.Annoy加速相似向量查找
+
+对于635965x300的词表，构建索引需要26秒，而查找只需1毫米左右。
+
+参考：https://mp.weixin.qq.com/s/clqJhvk-HJnYsTh9tg2VAw
+
+```python
+from my_tools.annoy_indexer import AnnoyIndexer
+# 1.get weight
+from paddlenlp.embeddings import TokenEmbedding
+token_embedding = TokenEmbedding(embedding_name="w2v.baidu_encyclopedia.target.word-word.dim300")
+weight = token_embedding.weight.numpy()
+
+# 2.build ann tree
+vocab_size = len(token_embedding.vocab)
+indices = list(range(vocab_size))
+tokens= token_embedding.vocab.to_tokens(indices)
+print(tokens[:10])
+
+print("build annoy indexer...")
+indexer = AnnoyIndexer(tokens,weight,num_trees=10)
+indexer.build_indexer()
+
+# 3. save params
+print("save annoy indexer...")
+indexer.save(path="save")
+
+# 4.load indexer
+print("load annoy indexer...")
+indexer_new = AnnoyIndexer()
+indexer_new.load(path="save")
+print(indexer_new)
+print(len(indexer_new))
+
+# 5.search sim word
+print("search sim words ...")
+word = "电影"
+# word = "国王"
+
+# idx = indexer_new.token2idx(word)
+vec = indexer_new.search_vector(word)
+topk=5
+ids, distances = indexer_new.most_similar(vec,topk)
+nearest_tokens = [indexer_new.idx2token(idx) for idx in ids]
+print(f"{word}'s {topk} nearest_tokens",nearest_tokens)
+# 电影's 5 nearest_tokens ['电影', '影片', '电视剧', '影视作品', '导演']
+# 国王's 5 nearest_tokens ['国王', '雅赫摩斯', '雨果·卡佩', '塞利姆', '法王路易']
 ```
 
