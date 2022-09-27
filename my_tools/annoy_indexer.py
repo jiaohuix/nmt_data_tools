@@ -85,7 +85,7 @@ class AnnoyIndexer(object):
         self.indexer = indexer
         logger.info("Indexer has been created.")
 
-    def save(self,path): # 还要保存其他信息,单独保存vocab
+    def save(self,path):
         # path/vocab.ann path/vocab.info
         if not os.path.exists(path): os.makedirs(path)
         ann_path = os.path.join(path,"vocab.ann")
