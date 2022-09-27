@@ -628,7 +628,7 @@ python my_tools/get_pivot_dict.py ru-en.txt zh-en.txt
 
 ### 19.Annoy加速相似向量查找
 
-对于635965x300的词表，构建索引需要26秒，而查找只需1毫米左右。
+对于635965x300的词表，构建索引需要26秒，而查找只需1毫秒左右。
 
 参考：https://mp.weixin.qq.com/s/clqJhvk-HJnYsTh9tg2VAw
 
