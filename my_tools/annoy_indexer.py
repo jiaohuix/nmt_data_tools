@@ -2,10 +2,11 @@
 usage:  Build annoy indexer, and  quickly find similar words.
 '''
 import os
+import sys
+import pickle
 import logging
 import numpy as np
 from tqdm import tqdm
-import pickle
 from annoy import AnnoyIndex
 
 logging.basicConfig(
@@ -111,19 +112,16 @@ class AnnoyIndexer(object):
 
     def most_similar(self, vector, topk):
         """Find `num_neighbors` most similar items.
-
         Parameters
         ----------
         vector : numpy.array
             Vector for word/document.
         topk : int
             Number of most similar items
-
         Returns
         -------
         list of (str, float)
             List of most similar items in format [(`item`, `cosine_distance`), ... ]
-
         """
         ids, distances = self.indexer.get_nns_by_vector(
             vector, topk, include_distances=True)
@@ -162,7 +160,7 @@ if __name__ == '__main__':
     print("save annoy indexer...")
     indexer.save(path="save")
 
-    # 4.load tree
+    # 4.load indexer
     print("load annoy indexer...")
     indexer_new = AnnoyIndexer()
     indexer_new.load(path="save")
