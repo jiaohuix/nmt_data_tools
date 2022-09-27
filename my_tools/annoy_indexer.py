@@ -7,6 +7,13 @@ import numpy as np
 from tqdm import tqdm
 import pickle
 from annoy import AnnoyIndex
+
+logging.basicConfig(
+    format="%(asctime)s | %(levelname)s | %(name)s | %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+    level=os.environ.get("LOGLEVEL", "INFO").upper(),
+    stream=sys.stdout,
+)
 logger = logging.getLogger("AnnoyIndexer")
 
 class AnnoyIndexer(object):
@@ -47,28 +54,22 @@ class AnnoyIndexer(object):
         return self.vocab_size
 
     def update_vocab(self,tokens ,vectors):
-        logger.info("Updating vocab...")
+        print("Updating vocab...")
         if not isinstance(vectors,np.ndarray): vectors = np.array(vectors)
         # tokens: list, vectors: numpy array
-        # deduplicate
-        mask = []
-        dedup_tokens = []
-        idx = 0
-        for token in tqdm(tokens):
-            if token not in self.vocab_tokens:
-                dedup_tokens.append(token)
-                self.vocab2indices[token] = self.vocab_size + idx
-                mask.append(True)
-                idx += 1
-            else:
-                mask.append(False)
-        mask = np.array(mask)
-        dedup_vectors = vectors[mask]
+        cur_indices = 0
+        dedup_vectors = []
+        for token,vector in tqdm(zip(tokens,vectors)):
+            idx = self.vocab2indices.get(token,None)
+            if idx is None: # new token
+                self.vocab_tokens.append(token)
+                dedup_vectors.append(vector)
+                self.vocab2indices[token] = self.vocab_size + cur_indices
+                cur_indices += 1
 
         # update vocab
         old_size  = self.vocab_size
-        self.vocab_tokens.extend(dedup_tokens)
-        self.vocab_vectors = np.vstack([self.vocab_vectors,dedup_vectors])
+        self.vocab_vectors = np.vstack([self.vocab_vectors,*dedup_vectors])
         self.vocab_size = len(self.vocab_tokens)
         logger.info(f"Origin vocab size: {old_size}, Current vocab size: {self.vocab_size}")
 
