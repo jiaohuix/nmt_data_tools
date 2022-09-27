@@ -6,3 +6,5 @@ wget
 sacremoses
 zhconv
 pythainlp
+annoy
+simhash
