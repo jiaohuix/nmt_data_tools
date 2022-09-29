@@ -6,6 +6,13 @@ import sys
 import numpy
 import json
 
+def check_unprintable_code(string):
+    try:
+        string.encode('gbk')
+    except UnicodeEncodeError as err:
+        if str(err).find("\\ue")!=-1:
+            return True
+    return False
 
 def main():
     for filename in sys.argv[1:]:
@@ -18,6 +25,7 @@ def main():
                 for w in words_in:
                     w=w.strip()
                     if len(w)==0:continue
+                    if check_unprintable_code(w): continue
                     if w not in word_freqs:
                         word_freqs[w] = 0
                     word_freqs[w] += 1
