@@ -233,8 +233,8 @@ if __name__ == "__main__":
             total_replace += replace_cnt
             total_token += sent_token
             # replaced_sents = [sent for sent in replaced_sents]
-            # replaced_sents = [" ".join(sent) + "\n" for sent in replaced_sents] # 不带lang token，后面bpe后再paste上去
-            replaced_sents = [f"<{lang_token}> "+" ".join(sent) + "\n" for sent in replaced_sents]
+            replaced_sents = [" ".join(sent) + "\n" for sent in replaced_sents] # 不带lang token，后面bpe后再paste上去
+            #replaced_sents = [f"<{lang_token}> "+" ".join(sent) + "\n" for sent in replaced_sents]
 
             # write every sent so to save memory
             for r_sent in replaced_sents:
