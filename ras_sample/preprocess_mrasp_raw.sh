@@ -37,10 +37,6 @@ for prefix in train valid
     # bidirection
     cat $out_folder/$prefix.tag.$src  $out_folder/$prefix.tag.$tgt > $out_folder/$prefix.tag.src
     cat $out_folder/$prefix.tag.$tgt  $out_folder/$prefix.tag.$src > $out_folder/$prefix.tag.tgt
-    # monolingual※
-    cat $out_folder/$prefix.tag.$src >> $out_folder/$prefix.tag.src && cat $out_folder/$prefix.tag.$src >> $out_folder/$prefix.tag.tgt
-    cat $out_folder/$prefix.tag.$tgt  >> $out_folder/$prefix.tag.src && cat $out_folder/$prefix.tag.$tgt >> $out_folder/$prefix.tag.tgt
-
   done
 
 # merge source mono
