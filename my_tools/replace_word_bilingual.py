@@ -2,7 +2,7 @@
 modify:Not just use English as the source sentence
 1. dict, lang pair
 2. lang en
-需求：
+修改：
 1. 根据输入的句子语言token，来确定所属语言和需要替换的词。支持多种词典 √
 2. 支持单语
 3. 写个demo，合到tools（单例，抽取词典）
@@ -254,7 +254,7 @@ if __name__ == "__main__":
           "With a proportion of {proportion}% \n"
           "The repeated times are set to {num_repeat}"
           .format(total_token=total_token, replaced_token=total_replace, num_repeat=args.num_repeat,
-                  proportion=total_replace / total_token * 100))
+                  proportion=total_replace / max(total_token,1) * 100))
 
     # os.remove(os.path.join(data_path, 'removed_bpe_file.src'))
     os.system("rm {}".format(os.path.join(data_path, 'removed_bpe_file.src')))
