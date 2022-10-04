@@ -25,7 +25,7 @@ if [ ! -d $fast_align ];then
   cd fast_align
   mkdir build && cd build
   cmake .. && make
-  cd ..
+  cd ../..
 fi
 
 # merge src tgt

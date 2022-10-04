@@ -417,6 +417,8 @@ bash postprocess.sh data/zhen_bpe/train.bpe
 
 ### 14.fast_align抽取词典
 
+可以直接或间接从MUSE获取词典，见18。
+
 注：linux环境，可在aistudio运行。
 
 ```shell
@@ -429,6 +431,12 @@ mv data/dev.tok.zh data/valid.zh
 # 2.fast align 对齐 （data/fast_align/dict.zh-en）
 # bash my_tools/fast_align_dict.sh <src> <tgt> <infolder> <outfolder> <topk>
 bash my_tools/fast_align_dict.sh zh en data/ align_output/ 1000
+# result
+head align_output//dict.zh-en
+我们    we      74
+的      of      50
+一个    a       48
+是      is      44
 
 # 3.抽取词典(可使用停用词过滤、语言标识过滤)
 # python my_tools/dict_filter.py <src_lang> <tgt_lang> <in_file> <out_file> <src_stop_file>(optional) <tgt_stop_file>(optional) <model_path>(optional)
@@ -436,27 +444,29 @@ bash my_tools/fast_align_dict.sh zh en data/ align_output/ 1000
 # 3.1简易抽取（去除1:m,m:1,m:n的对应）
 python my_tools/dict_filter.py  zh en  align_output/dict.zh-en align_output/dict.zh-en.txt  
 
-# 去除停用词、语言标识过滤(中英为例子)
+# result
+head -n 10 align_output/dict.zh-en.txt
+我们    we      74
+的      of      50
+是      is      44
+可以    can     41
+
+
+# 3.2去除停用词、语言标识过滤(中英为例子)
 git clone https://github.com/goto456/stopwords.git
 git clone https://github.com/stopwords-iso/stopwords-en.git
 # fast-text weight
 wget https://dl.fbaipublicfiles.com/fasttext/supervised-models/lid.176.bin
+
 python my_tools/dict_filter.py  zh  en  align_output/dict.zh-en align_output/dict.zh-en.txt  stopwords/cn_stopwords.txt stopwords-en/stopwords-en.txt lid.176.bin
 
-# 查看结果
-head -n 10 align_output/dict.zh-en.txt
-我们    we      148
-的      of      142
-的      the     120
-这个    the     100
-是      is      100
-，      and     94
-一个    a       84
-的      in      82
-我们    our     76
-可以    can     74
+# result
+机器人  robot   17
+语音    voice   15
+开发者  developers      12
+用户    user    12
 
-# 其他停用词
+# 4.其他停用词
 stop words:
     zh: https://github.com/goto456/stopwords.git            stopwords/cn_stopwords.txt
     en: https://github.com/stopwords-iso/stopwords-en.git   stopwords-en/stopwords-en.txt
