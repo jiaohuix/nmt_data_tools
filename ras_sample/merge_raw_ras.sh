@@ -15,7 +15,17 @@ cp $bpe_code  $folder/code
 # moses -> expanded_${prefix}.tok.src
 echo "--------------------Tokenize src file.--------------------"
 #bash moses_mix_lang.sh <in_prefix> <in_suffix> <src_lang> <tgt_lang> <outfile>
-bash ras_sample/moses_mix_lang.sh $folder/expanded_${prefix} src $src $tgt $folder/expanded_${prefix}.tok.src
+moses_arr=("en","es","fr","de","ru")
+if echo ${moses_arr[@]} | grep -w $src &>/dev/null
+  then
+      echo "do moses."
+      bash ras_sample/moses_mix_lang.sh $folder/expanded_${prefix} src $src $tgt $folder/expanded_${prefix}.tok.src
+  else
+     echo "do copy."
+     cp $folder/expanded_${prefix}.src $folder/expanded_${prefix}.tok.src
+fi
+
+
 
 ## bpe (看看bpe会不会影响<lang>)
 echo "--------------------Bpe src file.--------------------"

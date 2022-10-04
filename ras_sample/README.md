@@ -19,6 +19,21 @@ git clone https://github.com/moses-smt/mosesdecoder.git
 
 ```
 # 数据格式
+# 数据格式
+de_en/
+├── code # joint bpe code
+├── dict
+│   └── de-en.txt
+├── mono.de
+├── mono.en
+├── test.de
+├── test.en
+├── train.de
+├── train.en
+├── valid.de
+├── valid.en
+├── vocab.de
+└── vocab.en
 ```
 
 

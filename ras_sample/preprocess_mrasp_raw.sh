@@ -18,16 +18,16 @@ cat $out_folder/vocab.src > $out_folder/vocab.tgt
 # add tag
 for prefix in train valid test
   do
-    python my_tools/prepend_tag.py $in_folder/$prefix.$src $out_folder/$prefix.tag.$src $src
-    python my_tools/prepend_tag.py $in_folder/$prefix.$tgt $out_folder/$prefix.tag.$tgt $tgt
+    sed "s/^/<$src> /g" $in_folder/$prefix.$src > $out_folder/$prefix.tag.$src
+    sed "s/^/<$tgt> /g" $in_folder/$prefix.$tgt > $out_folder/$prefix.tag.$tgt
   done
 # source mono tag
 if [ -e $in_folder/mono.$src ];then
-  python my_tools/prepend_tag.py $in_folder/mono.$src $out_folder/mono.tag.$src $src
+    sed "s/^/<$src> /g"  $in_folder/mono.$src > $out_folder/mono.tag.$src
 fi
 # target mono tag
 if [ -e $in_folder/mono.$tgt ];then
-  python my_tools/prepend_tag.py $in_folder/mono.$tgt $out_folder/mono.tag.$tgt $tgt
+      sed "s/^/<$tgt> /g"  $in_folder/mono.$tgt > $out_folder/mono.tag.$tgt
 fi
 
 
