@@ -50,12 +50,12 @@ python my_tools/shuffle_pair.py src tgt $folder/$prefix.ras   $folder/
 mv $folder/shuffle.src $folder/$prefix.ras.src && mv $folder/shuffle.tgt $folder/$prefix.ras.tgt
 
 # subsample valid
-echo "--------------------Subsample valid ras file.--------------------"
-if [ "$prefix"x = "valid"x ];then
-  head -n 5000 $folder/$prefix.ras.src > $folder/tmp.src
-  head -n 5000 $folder/$prefix.ras.tgt > $folder/tmp.tgt
-  mv $folder/tmp.src  $folder/$prefix.ras.src
-  mv $folder/tmp.tgt  $folder/$prefix.ras.tgt
-fi
+# echo "--------------------Subsample valid ras file.--------------------"
+# if [ "$prefix"x = "valid"x ];then
+#   head -n 5000 $folder/$prefix.ras.src > $folder/tmp.src
+#   head -n 5000 $folder/$prefix.ras.tgt > $folder/tmp.tgt
+#   mv $folder/tmp.src  $folder/$prefix.ras.src
+#   mv $folder/tmp.tgt  $folder/$prefix.ras.tgt
+# fi
 
 echo "Done!"
