@@ -417,16 +417,34 @@ bash postprocess.sh data/zhen_bpe/train.bpe
 
 ### 14.fast_align抽取词典
 
+注：linux环境，可在aistudio运行。
+
 ```shell
-# 分词
+# 1.分词
 bash my_tools/cut.sh 4 data/train.zh data/train.tok.zh
 bash my_tools/cut.sh 4 data/dev.zh data/dev.tok.zh
 mv data/train.tok.zh data/train.zh
-mv data/dev.tok.zh data/dev.zh
-# 抽取词典 （data/fast_align/dict.zh-en）
-bash fast_align_dict.sh
+mv data/dev.tok.zh data/valid.zh
+
+# 2.fast align 对齐 （data/fast_align/dict.zh-en）
+# bash my_tools/fast_align_dict.sh <src> <tgt> <infolder> <outfolder> <topk>
+bash my_tools/fast_align_dict.sh zh en data/ align_output/ 1000
+
+# 3.抽取词典(可使用停用词过滤、语言标识过滤)
+# python my_tools/dict_filter.py <src_lang> <tgt_lang> <in_file> <out_file> <src_stop_file>(optional) <tgt_stop_file>(optional) <model_path>(optional)
+# src_stop_file和tgt_stop_file是停用词文件，model_path是fasttext的模型权重路径，两个都是可选参数
+# 3.1简易抽取（去除1:m,m:1,m:n的对应）
+python my_tools/dict_filter.py  zh en  align_output/dict.zh-en align_output/dict.zh-en.txt  
+
+# 去除停用词、语言标识过滤(中英为例子)
+git clone https://github.com/goto456/stopwords.git
+git clone https://github.com/stopwords-iso/stopwords-en.git
+# fast-text weight
+wget https://dl.fbaipublicfiles.com/fasttext/supervised-models/lid.176.bin
+python my_tools/dict_filter.py  zh  en  align_output/dict.zh-en align_output/dict.zh-en.txt  stopwords/cn_stopwords.txt stopwords-en/stopwords-en.txt lid.176.bin
+
 # 查看结果
-head -n 10 data/fast_align/dict.zh-en
+head -n 10 align_output/dict.zh-en.txt
 我们    we      148
 的      of      142
 的      the     120
@@ -437,6 +455,17 @@ head -n 10 data/fast_align/dict.zh-en
 的      in      82
 我们    our     76
 可以    can     74
+
+# 其他停用词
+stop words:
+    zh: https://github.com/goto456/stopwords.git            stopwords/cn_stopwords.txt
+    en: https://github.com/stopwords-iso/stopwords-en.git   stopwords-en/stopwords-en.txt
+    de: https://github.com/stopwords-iso/stopwords-de.git
+    fr: https://github.com/stopwords-iso/stopwords-fr
+    es: https://github.com/stopwords-iso/stopwords-es.git
+    vi: https://github.com/stopwords/vietnamese-stopwords.git
+    ru: https://github.com/stopwords-iso/stopwords-ru
+
 ```
 
 目前已经可以抽取词典，后续准备添加停用词过滤，然后清洗词典，或者检测并保留些实体词，就不放在抽取词典上了。
