@@ -1,5 +1,4 @@
 #!/bin/sh
-
 folder=$1
 prefix=$2
 bpe_code=$3
