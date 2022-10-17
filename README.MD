@@ -333,6 +333,13 @@ write to data\upsample.en success.
 
 ### 10.打乱平行语料
 
+新增：可以直接使用shell命令`shuf`进行打乱，对大文件非常友好。
+```shell
+seed=1
+shuf --random-source=<(yes $seed) train.src > train.shuf.src
+shuf --random-source=<(yes $seed) train.src > train.shuf.tgt
+```
+
 ```shell
 # 1.command:
 python my_tools/shuffle_pair.py <src_lang> <tgt_lang> <data_prefix> <out_folder>
