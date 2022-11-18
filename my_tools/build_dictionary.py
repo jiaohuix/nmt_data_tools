@@ -2,7 +2,7 @@
 from collections import OrderedDict
 import fileinput
 import sys
-
+from tqdm import tqdm
 import numpy
 import json
 
@@ -20,7 +20,7 @@ def main():
         print('Processing', filename)
         word_freqs = OrderedDict()
         with open(filename, 'r', encoding='utf-8') as f:
-            for line in f:
+            for line in tqdm(f):
                 words_in = line.strip().split(' ')
                 for w in words_in:
                     w=w.strip()
@@ -43,7 +43,7 @@ def main():
         worddict['</s>'] = sorted_freqs[0]+8
         worddict['<unk>'] = sorted_freqs[0]+7
         # FIXME We shouldn't assume <EOS>, <GO>, and <UNK> aren't BPE subwords.
-        for word,freq in zip(sorted_words,sorted_freqs):
+        for word,freq in tqdm(zip(sorted_words,sorted_freqs)):
             worddict[word] = freq
 
         # The JSON RFC requires that JSON text be represented using either

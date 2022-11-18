@@ -48,16 +48,24 @@ def get_step_info(info):
 
 def length_filter(text_pair_ls,args):
     print("Length filtering...")
+    num_empty=0
     info={"ratio":[],"src_len":[],"tgt_len":[]}
     selected_pair, trash_pair=[], []
     for pair in tqdm(text_pair_ls):
         linea,lineb=pair[0].strip(),pair[1].strip()
+        # empty
+        if len(linea)==0 or len(lineb)==0:
+            trash_pair.append(pair)
+            num_empty+=1
+            continue
+
         len_a,len_b=len(linea.split()),len(lineb.split())
         if args.remove_bpe:
             len_a=len(linea.replace("@@ ","").split())
             len_b=len(lineb.replace("@@ ","").split())
 
         max_len,min_len=max(len_a,len_b),min(len_a,len_b)
+        min_len = max(min_len,1)
         ratio = max_len/min_len
         flag=True if (min_len>=args.low and max_len<=args.up) else False
         if flag and ratio > args.ratio: flag=False
@@ -76,6 +84,7 @@ def length_filter(text_pair_ls,args):
     print(df.describe())
     step_info=get_step_info(info)
     print(f"step info: {step_info}")
+    print("skipped {} empty pairs".format(num_empty))
 
     return selected_pair,trash_pair
 

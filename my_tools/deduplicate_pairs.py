@@ -15,8 +15,10 @@ from multiprocessing import Pool
 def get_hashes_and_pairs(sent_pair):
     src,tgt= sent_pair
     text= f"{src.strip()}\t{tgt.strip()}"
-    hash = hashlib.md5(text.encode()).hexdigest()
-    return hash, sent_pair
+    hash_pair = hashlib.md5(text.encode()).hexdigest()
+    hash_src = hashlib.md5(src.strip().encode()).hexdigest()
+    hash_tgt = hashlib.md5(tgt.strip().encode()).hexdigest()
+    return hash_src,hash_tgt,hash_pair, sent_pair
 
 
 def main(in_prefix,src_lang,tgt_lang,workers=1):
@@ -29,13 +31,15 @@ def main(in_prefix,src_lang,tgt_lang,workers=1):
         pool = Pool(processes=workers)
         paris=zip(fr_src,fr_tgt)
         results=pool.imap_unordered(get_hashes_and_pairs,paris,chunksize=1000)
-        for i,(hash,sent_pairs) in tqdm(enumerate(results)):
-            if hash not in seen:
-                seen.add(hash)
+        for i,(hash_src,hash_tgt,hash_pair,sent_pairs) in tqdm(enumerate(results)):
+            if (hash_src not in seen) and (hash_tgt not in seen) and (hash_pair not in seen):
+                seen.add(hash_src)
+                seen.add(hash_tgt)
+                seen.add(hash_pair)
                 src_line,tgt_line = sent_pairs
                 fw_src.write(src_line)
                 fw_tgt.write(tgt_line)
-        print(f"Deduplicate done! Total [{len(seen)}/{i+1}] lines.")
+        print(f"Deduplicate done! Total [{len(seen)/3}/{i+1}] lines.")
 
 if __name__ == "__main__":
     assert len(sys.argv)==5,f"usage: python {sys.argv[0]} <in_prefix> <src_lang> <tgt_lang>  <workers>" \

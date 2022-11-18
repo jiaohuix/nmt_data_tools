@@ -131,6 +131,7 @@ def load_dicts(dictionary_path, languages, sep=" "):
 
 
 # replace tokens in one sentence
+# 尝试在token后面拼接翻译token
 def replace_one_sent(tokens, dictionary):
     """
 

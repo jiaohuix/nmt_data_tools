@@ -2,6 +2,7 @@ import os
 import sys
 import time
 import logging
+import zhconv
 from tqdm import tqdm
 import jieba
 logger=logging.getLogger('cut')
@@ -20,8 +21,8 @@ def write_file(res,file):
 res = []
 def process(sent):
     sent=sent.strip()
-    ls=jieba.lcut(sent)
-    sent=' '.join(ls)+'\n'
+    sent = zhconv.convert(sent, "zh-cn")
+    sent = " ".join(jieba.lcut(sent)) +'\n'
     res.append(sent)
     return sent
 
