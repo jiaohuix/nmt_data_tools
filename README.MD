@@ -38,8 +38,14 @@ pip install -r requirements.txt
 
 **新增：单个py脚本支持中文zh、泰文th的多进程分词。   22/8/12**
 
-```
-python my_tools/cut_multi.py <infile> <outfile> <workers> <lang>(zh/th)
+新增2：支持moses tokenize 22/11/30
+
+新增3：支持大小写处理
+
+```shell
+python my_tools/cut_multi.py <infile> <outfile> <workers> <lang>(zh/th/en...)
+# 英文后处理
+python my_tools/decaser.py <infile> <outfile> en 
 ```
 
 以前的，可以不用看了。

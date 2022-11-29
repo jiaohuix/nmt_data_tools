@@ -5,16 +5,32 @@ import zhconv
 from tqdm import tqdm
 from functools import partial
 from multiprocessing import Pool
+def process_uppercase(words):
+    ''' wechat WMT22 paper: Summer: WeChat Neural Machine Translation Systems for the WMT22 Biomedical Translation Task'''
+    res = []
+    for word in words:
+        if word.isupper():
+            res.extend(["_UU_",word.lower()])
+        elif word[0].isupper():
+            res.extend(["_U_",word[0].upper()+ word[1:]])
+        else:
+            res.append(word)
+    return res
 
 def cut_words(sent,lang="zh"):
     sent=sent.strip()
     if lang=="zh":
         sent=zhconv.convert(sent,"zh-cn")
-        sent=" ".join(jieba.lcut(sent))
+        words = jieba.lcut(sent)
     elif lang=="th":
         from pythainlp import word_tokenize
-        sent=" ".join(word_tokenize(sent,keep_whitespace=False))
-    sent+="\n"
+        words = word_tokenize(sent,keep_whitespace=False)
+    else:
+        from sacremoses import MosesTokenizer
+        tokenizer = MosesTokenizer(lang=lang)
+        words = tokenizer.tokenize(sent)
+        words = process_uppercase(words)
+    sent = " ".join(words) + "\n"
     return sent
 
 def main(infile,outfile,workers=1,lang="zh"):
@@ -32,5 +48,5 @@ if __name__ == '__main__':
     outfile=sys.argv[2]
     workers=int(sys.argv[3])
     lang=sys.argv[4]
-    assert lang in ["zh","th"]
+    assert lang in ["zh","th","en","fr","de","es","cz","cs"]
     main(infile,outfile,workers,lang)
