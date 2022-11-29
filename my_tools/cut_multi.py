@@ -5,7 +5,6 @@ import zhconv
 from tqdm import tqdm
 from functools import partial
 from multiprocessing import Pool
-from pythainlp import word_tokenize
 
 def cut_words(sent,lang="zh"):
     sent=sent.strip()
@@ -13,6 +12,7 @@ def cut_words(sent,lang="zh"):
         sent=zhconv.convert(sent,"zh-cn")
         sent=" ".join(jieba.lcut(sent))
     elif lang=="th":
+        from pythainlp import word_tokenize
         sent=" ".join(word_tokenize(sent,keep_whitespace=False))
     sent+="\n"
     return sent
