@@ -88,4 +88,4 @@ if __name__ == '__main__':
     infile=sys.argv[1]
     outfile=sys.argv[2]
     lang=sys.argv[3]
-    main(infile,outfile,workers,lang)
+    main(infile,outfile,lang)
