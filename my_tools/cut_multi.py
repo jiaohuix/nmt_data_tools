@@ -12,7 +12,7 @@ def process_uppercase(words):
         if word.isupper():
             res.extend(["_UU_",word.lower()])
         elif word[0].isupper():
-            res.extend(["_U_",word[0].upper()+ word[1:]])
+            res.extend(["_U_",word[0].lower()+ word[1:]])
         else:
             res.append(word)
     return res
