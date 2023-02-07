@@ -44,5 +44,6 @@ function paral_bpe(){
 
 }
 
+rm $outfile
 paral_bpe $workers $infile $outfile $bpe_code
 echo "all done!"
