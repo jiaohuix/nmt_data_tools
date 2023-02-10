@@ -41,7 +41,9 @@ function func_paral_process(){
     local py_script=$2
     local infile=$3
     local outfile=$4
-    local optional=${5:-""}
+    shift 4 # Remove the first four parameters
+    local optional=$@ # Accepts arguments of any length
+#    local optional=${5:-""}
     # 1.shard [infile->infile.idx]
     func_shard $workers $infile
 

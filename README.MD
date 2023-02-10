@@ -36,13 +36,23 @@ cd nmt_data_tools
 
 <a id="1"></a>
 
-### 1.⭐多进程分词
+### 1.多进程分词
 
-支持：中、泰
+支持：	
+
+1. 中、泰多进程分词
+
+2. 中：jieba、thulac、ltp
+
+3. 用户定义词典，词典中每一个词一行。
+
+   词典下载（需要去除第二列词频）：[THUOCL：清华大学开放中文词库](http://thuocl.thunlp.org/)
 
 ```shell
-# bash my_tools/cut.sh <workers> <infile> <outfile> <lang>(optional) <backend>(optional)
-# lang=zh/th, backend=jieba/thulac/ltp(chinese segment)
+# bash my_tools/cut.sh <workers> <infile> <outfile>
+# 可选参数：<lang> <backend> <userdict>
+# lang=zh/th, backend=jieba/thulac/ltp(chinese segment) 
+# userdict： 用户定义词典，一行一个词
 
 # exp1: “那么我们都可以在这个平台上面可以拿到它所有源代码去加以运用。”
 # zh-jieba speed=3s
@@ -52,7 +62,10 @@ bash my_tools/cut.sh 4 data/train.zh data/train.tok.zh zh thulac
 # jieba-res: 那么 我们 都 可以 在 这个 平台 上面 可以 拿到 它 所有 源代码 去 加以 运用 。
 # thulac-res: 那 么 我们 都 可以 在 这个 平台 上面 可以 拿 到 它 所有 源 代码 去 加以 运用 。
 
-# exp2: "ผม/ฉันมาจากสหรัฐอเมริกา"
+# exp3: 用户词典
+bash my_tools/cut.sh 4 data/train.zh data/train.tok.zh zh thulac data/THUOCL_medical.txt
+
+# exp3: "ผม/ฉันมาจากสหรัฐอเมริกา"
 # th-pythainlp
 bash my_tools/cut.sh 4 data/train.zh data/train.tok.zh th
 # res: ผม / ฉัน มาจาก สหรัฐอเมริกา
@@ -181,7 +194,7 @@ python my_tools/process_xml.py data/xml/bgzh/val.bg-zh.bg.xml data/
 #write to data/val.bg-zh.bg.txt success.
 ```
 
-#### 4.2 ⭐提取含xml的文件夹
+#### 4.2 提取含xml的文件夹
 
 ```
 ############### input ############### ：
@@ -214,7 +227,7 @@ bash my_tools/process_xml_folder.sh data/xml/ xml_out
 
 <a id="5"></a>
 
-### 5.⭐写入xml：
+### 5.写入xml：
 
 ```shell
 # 1.生成xml
@@ -400,7 +413,7 @@ wc data/dedup.zh
 
 <a id="12"></a>
 
-### 12.⭐翻译数据处理
+### 12.翻译数据处理
 
 以zh en为例进行数据处理：
 
@@ -517,7 +530,7 @@ python nmt_data_tools/my_tools/replace_word_bilingual.py --langs de;en --dict-pa
 
 <a id="16"></a>
 
-### 16.⭐罕见词、乱码过滤（中文）
+### 16.罕见词、乱码过滤（中文）
 
 1.对于部分乱码，编码成gbk后会报错，如此可以剔除一部分：
 
