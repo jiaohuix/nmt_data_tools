@@ -65,7 +65,7 @@ bash my_tools/cut.sh 4 data/train.zh data/train.tok.zh zh thulac
 # exp3: 用户词典
 bash my_tools/cut.sh 4 data/train.zh data/train.tok.zh zh thulac data/THUOCL_medical.txt
 
-# exp3: "ผม/ฉันมาจากสหรัฐอเมริกา"
+# exp4: "ผม/ฉันมาจากสหรัฐอเมริกา"
 # th-pythainlp
 bash my_tools/cut.sh 4 data/train.zh data/train.tok.zh th
 # res: ผม / ฉัน มาจาก สหรัฐอเมริกา
