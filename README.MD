@@ -50,9 +50,7 @@ cd nmt_data_tools
    | ----- | ------- | ----- |
    | 4.08s | 16.572s | 1h+.. |
 
-3. 用户定义词典，词典中每一个词一行。
-
-   词典下载（需要去除第二列词频）：[THUOCL：清华大学开放中文词库](http://thuocl.thunlp.org/)
+3.  data/userwords.txt从[THUOCL：清华大学开放中文词库](http://thuocl.thunlp.org/)提取11类共22w中文词，可以作为用户定义词典提高分词的精度。
 
 ```shell
 # bash my_tools/cut.sh <workers> <infile> <outfile>
@@ -72,7 +70,7 @@ bash my_tools/cut.sh 4 data/train.zh data/train.tok.zh zh thulac
 python my_tools/cut.py 4 data/train.zh data/train.tok.zh ltp
 
 # exp4: 用户词典
-bash my_tools/cut.sh 4 data/train.zh data/train.tok.zh zh thulac data/THUOCL_medical.txt
+bash my_tools/cut.sh 4 data/train.zh data/train.tok.zh zh thulac data/userwords.txt
 
 # exp5: "ผม/ฉันมาจากสหรัฐอเมริกา"
 # th-pythainlp
