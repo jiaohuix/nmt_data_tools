@@ -1,5 +1,6 @@
 #!/bin/bash
-
+# function: parallel data process.
+# support python file:  python <infile> <outfile> <optional>
 function func_shard(){
     local workers=$1
     local infile=$2
@@ -40,6 +41,7 @@ function func_paral_process(){
     local py_script=$2
     local infile=$3
     local outfile=$4
+    local optional=${5:-""}
     # 1.shard [infile->infile.idx]
     func_shard $workers $infile
 
@@ -48,7 +50,7 @@ function func_paral_process(){
     do
       (
       echo "----------------------processing shard: ${i}.----------------------"
-      python $py_script $infile.${i} $infile.tmp.${i}
+      python $py_script $infile.${i} $infile.tmp.${i} $optional
       rm $infile.${i}
       )&
     done

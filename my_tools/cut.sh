@@ -1,45 +1,33 @@
 #!/bin/bash
 
 if [ $# -lt 3 ];then
-  echo "usage: bash $0 <workers> <infile> <outfile>"
+  echo "usage: bash $0 <workers> <infile> <outfile> <lang>(opt) <backend>(opt)"
+  echo "<lang>: only support  lang=(zh, th), default=zh."
+  echo "<backend>: chinese segment backend, choices=(jieba, thulac, lpt, default=jieba)."
   exit
 fi
 
+# cmd var
 workers=$1
 infile=$2
 outfile=$3
+lang=${4:-"zh"}
+backend=${5:-"jieba"}
 
-lines=`cat $infile | wc -l`
-echo "total lines: $lines"
+# env var
+#export TOOLS=$PWD/nmt_data_tools/
+mtools=$TOOLS/my_tools/
+source $mtools/func/shard_func.sh
 
-shard_lines=$((lines/4)) # 每块多少行
-tail_lines=$((lines%4)) # 多了多少行
-# 分块
-for i in $(seq 0 $(($workers-1)))
-do
-  tail -n +$(($i*$shard_lines+1)) $infile | head -n $shard_lines > $infile.${i}
-done
-tail -n +$(($workers*$shard_lines+1))  $infile>> $infile.$(($workers-1))
+py_script=$mtools/cut.py
+optional=$backend
 
-
-# 执行分词,()和&把for里面需要执行的命令当作一个组合并在后台运行,wait等待所有后台子程序执行完毕再往后运行
-for i in $(seq 0 $(($workers-1)))
-do
-  (
-  echo "cut shard:${i}"
-  python my_tools/cut.py $infile.${i} $infile.cut.${i}
-  )&
-done
-wait
-
-# 结果文件若存在先删除
-if [ -e $outfile ];then
-  rm $outfile
+if [ "$lang"x == "th"x ]
+  then
+    py_script=$mtools/cut_th.py
+    optional=""
 fi
 
-# 合并并删除分块
-for i in $(seq 0 $(($workers-1)))
-do
-  cat $infile.cut.${i} >> $outfile
-  rm $infile.${i} &&  rm $infile.cut.${i}
-done
+
+echo "cmd:  python $py_script $infile $outfile $optional"
+func_paral_process $workers $py_script $infile $outfile $optional

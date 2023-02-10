@@ -6,8 +6,10 @@
 
 ```shell
 git clone https://github.com/MiuGod0126/nmt_data_tools.git
+# 设置环境变量
+export TOOLS=$PWD/nmt_data_tools/
+pip install -r nmt_data_tools/requirements.txt
 cd nmt_data_tools
-pip install -r requirements.txt
 ```
 
 ## 目录：
@@ -34,38 +36,33 @@ pip install -r requirements.txt
 
 <a id="1"></a>
 
-### 1.中文jieba**分词**，与⭐多进程分词
+### 1.⭐多进程分词
 
-**新增：单个py脚本支持中文zh、泰文th的多进程分词。   22/8/12**
-
-新增2：支持moses tokenize 22/11/30
-
-新增3：支持大小写处理
+支持：中、泰
 
 ```shell
-python my_tools/cut_multi.py <infile> <outfile> <workers> <lang>(zh/th/en...)
+# bash my_tools/cut.sh <workers> <infile> <outfile> <lang>(optional) <backend>(optional)
+# lang=zh/th, backend=jieba/thulac/ltp(chinese segment)
+
+# exp1: “那么我们都可以在这个平台上面可以拿到它所有源代码去加以运用。”
+# zh-jieba speed=3s
+bash my_tools/cut.sh 4 data/train.zh data/train.tok.zh 
+# zh-thulac speed=3min
+bash my_tools/cut.sh 4 data/train.zh data/train.tok.zh zh thulac
+# jieba-res: 那么 我们 都 可以 在 这个 平台 上面 可以 拿到 它 所有 源代码 去 加以 运用 。
+# thulac-res: 那 么 我们 都 可以 在 这个 平台 上面 可以 拿 到 它 所有 源 代码 去 加以 运用 。
+
+# exp2: "ผม/ฉันมาจากสหรัฐอเมริกา"
+# th-pythainlp
+bash my_tools/cut.sh 4 data/train.zh data/train.tok.zh th
+# res: ผม / ฉัน มาจาก สหรัฐอเมริกา
+```
+
+
+
+```shell
 # 英文后处理
 python my_tools/decaser.py <infile> <outfile> en 
-```
-
-以前的，可以不用看了。
-
-```shell
-# 1.单进程
-python my_tools/cut.py src_file tgt_file
-# 2.多进程
-workers=4
-bash my_tools/cut.sh  $workers src_file tgt_file
-
-# 3.example:
-bash my_tools/cut.sh 4 data/train.zh data/train.tok.zh
-# result: 啊额最后一站了，然后回到了大本营北京。=>啊 额 最后 一站 了 ， 然后 回到 了 大本营 北京 。
-```
-
-新增泰语分分词：
-
-```shell
-bash my_tools/cut_th.sh  $workers src_file tgt_file
 ```
 
 

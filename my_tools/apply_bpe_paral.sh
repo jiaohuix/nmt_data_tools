@@ -10,8 +10,9 @@ infile=$2
 outfile=$3
 bpe_code=$4
 
-
-source my_tools/shard_func.sh
+#export TOOLS=$PWD/nmt_data_tools/
+mtools=$TOOLS/my_tools/
+source $mtools/func/shard_func.sh
 
 function paral_bpe(){
     local workers=$1

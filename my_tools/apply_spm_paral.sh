@@ -11,7 +11,9 @@ tgt=$3
 inprefix=$4
 spm_model=$5
 
-source my_tools/shard_func.sh
+#export TOOLS=$PWD/nmt_data_tools/
+mtools=$TOOLS/my_tools/
+source $mtools/func/shard_func.sh
 
 function paral_spm(){
     local workers=$1

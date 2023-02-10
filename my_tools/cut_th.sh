@@ -9,6 +9,10 @@ workers=$1
 infile=$2
 outfile=$3
 
+#export TOOLS=$PWD/nmt_data_tools/
+mtools=$TOOLS/my_tools/
+
+
 lines=`cat $infile | wc -l`
 echo "total lines: $lines"
 
@@ -27,7 +31,7 @@ for i in $(seq 0 $(($workers-1)))
 do
   (
   echo "cut shard:${i}"
-  python my_tools/cut_th.py $infile.${i} $infile.cut.${i}
+  python $mtools/cut_th.py $infile.${i} $infile.cut.${i}
   )&
 done
 wait

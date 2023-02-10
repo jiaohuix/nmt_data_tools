@@ -9,7 +9,9 @@ workers=$1
 infile=$2
 
 
-source my_tools/shard_func.sh
+#export TOOLS=$PWD/nmt_data_tools/
+mtools=$TOOLS/my_tools/
+source $mtools/func/shard_func.sh
 
 function paral_word_count(){
     local workers=$1
@@ -23,7 +25,7 @@ function paral_word_count(){
       (
       echo "---------------------- Counting shard${i}'s words .----------------------"
       #
-      python my_tools/build_dictionary.py $infile.${i}
+      python $mtools/build_dictionary.py $infile.${i}
       rm $infile.${i}
       )&
     done
@@ -38,7 +40,7 @@ function paral_word_count(){
       done
     ## merge json fikes
     echo "merging json files: ${json_files[@]}"
-    python my_tools/merge_json.py  "${json_files[@]}"
+    python $mtools/merge_json.py  "${json_files[@]}"
 
     ## rm tmp json files
     for file in ${json_files[@]}

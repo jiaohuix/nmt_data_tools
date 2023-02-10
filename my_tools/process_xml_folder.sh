@@ -16,6 +16,10 @@ fi
 root=$1
 out_root=$2
 
+#export TOOLS=$PWD/nmt_data_tools/
+mtools=$TOOLS/my_tools/
+
+
 # 遍历所有含有xml的文件夹
 for folder in ` ls $root `
   do
@@ -32,7 +36,7 @@ for folder in ` ls $root `
                   mkdir -p $out_root/$folder
                 fi
                 # xml转txt文件，并输出到out_root目录下相同位置
-                python my_tools/process_xml.py $root/$folder/$file $out_root/$folder
+                python $mtools/process_xml.py $root/$folder/$file $out_root/$folder
               fi
           fi
         done

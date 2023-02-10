@@ -17,19 +17,20 @@ def write_file(res,file):
         f.writelines(res)
     print(f'write to {file} success, total {len(res)} lines.')
 
-res = []
-def process(sent):
-    sent=sent.strip()
-    sent=word_tokenize(sent,keep_whitespace=False)
-    sent=' '.join(sent)+'\n'
-    res.append(sent)
-    return sent
+def process(lines):
+    res = []
+    for sent in tqdm(lines):
+        sent = sent.strip()
+        sent = word_tokenize(sent, keep_whitespace=False)
+        sent = ' '.join(sent) + '\n'
+        res.append(sent)
+    return res
+
 
 if __name__ == '__main__':
     assert len(sys.argv)==3,f"usage: python {sys.argv[0]} <infile> <outfile>"
     infile=sys.argv[1]
     outfile=sys.argv[2]
     lines=read_file(infile)
-    for line in tqdm(lines):
-        process(line)
+    res = process(lines)
     write_file(res,outfile)
