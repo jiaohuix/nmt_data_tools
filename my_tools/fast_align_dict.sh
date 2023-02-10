@@ -13,6 +13,8 @@ topk=$5
 fast_align=fast_align/build
 TRAIN=train
 VALID=valid
+#export TOOLS=$PWD/nmt_data_tools/
+mtools=$TOOLS/my_tools/
 
 if [ -d $out_folder ];then
   rm -rf $out_folder
@@ -32,7 +34,7 @@ fi
 echo "merge src and tgt..."
 for prefix in $TRAIN $VALID
   do
-    python my_tools/merge_align.py $in_folder/$prefix.$src  $in_folder/$prefix.$tgt $out_folder/$prefix
+    python $mtools/merge_align.py $in_folder/$prefix.$src  $in_folder/$prefix.$tgt $out_folder/$prefix
     cat $out_folder/$prefix >> $out_folder/merge.$src-$tgt
     rm $out_folder/$prefix
   done
@@ -47,6 +49,6 @@ $fast_align/atools -i $out_folder/forward.align -j $out_folder/reverse.align -c 
 
 # extract dict
 echo "extract dict..."
-python my_tools/extract_dict.py $out_folder/merge.$src-$tgt $out_folder/$src-$tgt.align $out_folder/dict.$src-$tgt $topk
+python $mtools/extract_dict.py $out_folder/merge.$src-$tgt $out_folder/$src-$tgt.align $out_folder/dict.$src-$tgt $topk
 
 echo "all done!"
