@@ -42,7 +42,13 @@ cd nmt_data_tools
 
 1. 中、泰多进程分词
 
-2. 中：jieba、thulac、ltp
+2. 中：jieba、thulac、ltp，速度如下（10w句，AMD EPYC 7601cpu10核并行）
+
+   注意：ltp使用了torch模型，速度较慢，不建议用来分词；若要用则用cut.py而非cut.sh,因为ltp自带了多核优化。
+
+   | jieba | thulac  | ltp   |
+   | ----- | ------- | ----- |
+   | 4.08s | 16.572s | 1h+.. |
 
 3. 用户定义词典，词典中每一个词一行。
 
@@ -51,21 +57,24 @@ cd nmt_data_tools
 ```shell
 # bash my_tools/cut.sh <workers> <infile> <outfile>
 # 可选参数：<lang> <backend> <userdict>
-# lang=zh/th, backend=jieba/thulac/ltp(chinese segment) 
+# lang=zh/th, backend=jieba/thulac(chinese segment) 
 # userdict： 用户定义词典，一行一个词
 
 # exp1: “那么我们都可以在这个平台上面可以拿到它所有源代码去加以运用。”
-# zh-jieba speed=3s
+# zh-jieba speed=2.42
 bash my_tools/cut.sh 4 data/train.zh data/train.tok.zh 
-# zh-thulac speed=3min
+# zh-thulac speed=3.67s
 bash my_tools/cut.sh 4 data/train.zh data/train.tok.zh zh thulac
 # jieba-res: 那么 我们 都 可以 在 这个 平台 上面 可以 拿到 它 所有 源代码 去 加以 运用 。
 # thulac-res: 那 么 我们 都 可以 在 这个 平台 上面 可以 拿 到 它 所有 源 代码 去 加以 运用 。
 
-# exp3: 用户词典
+# exp3: ltp默认带了多核优化，若再用shell开多进程会被kill
+python my_tools/cut.py 4 data/train.zh data/train.tok.zh ltp
+
+# exp4: 用户词典
 bash my_tools/cut.sh 4 data/train.zh data/train.tok.zh zh thulac data/THUOCL_medical.txt
 
-# exp4: "ผม/ฉันมาจากสหรัฐอเมริกา"
+# exp5: "ผม/ฉันมาจากสหรัฐอเมริกา"
 # th-pythainlp
 bash my_tools/cut.sh 4 data/train.zh data/train.tok.zh th
 # res: ผม / ฉัน มาจาก สหรัฐอเมริกา

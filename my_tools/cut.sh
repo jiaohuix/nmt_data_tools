@@ -3,7 +3,7 @@
 if [ $# -lt 3 ];then
   echo "usage: bash $0 <workers> <infile> <outfile> <lang>(opt) <backend>(opt) <userdict>(opt)"
   echo "<lang>: only support  lang=(zh, th), default=zh."
-  echo "<backend>: chinese segment backend, choices=(jieba, thulac, lpt, default=jieba)."
+  echo "<backend>: chinese segment backend, choices=(jieba, thulac), default=jieba."
   echo "<userdict>: chinese user dict."
   exit
 fi
