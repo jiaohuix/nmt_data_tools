@@ -15,7 +15,7 @@ outfile=$3
 lang=${4:-"zh"}
 backend=${5:-"jieba"}
 userdict=${6:-""}
-
+cmd="python"
 # env var
 #export TOOLS=$PWD/nmt_data_tools/
 mtools=$TOOLS/my_tools/
@@ -30,5 +30,8 @@ if [ "$lang"x == "th"x ]
 fi
 
 
-echo "cmd:  python $py_script $infile $outfile $optional"
-func_paral_process $workers $py_script $infile $outfile $optional
+echo "cmd:  $cmd $py_script $infile $outfile $optional"
+func_paral_process $cmd $py_script $infile $outfile $workers $optional
+
+echo "all done!"
+

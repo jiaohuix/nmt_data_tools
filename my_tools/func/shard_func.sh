@@ -37,13 +37,22 @@ function func_merge_shard(){
 }
 
 function func_paral_process(){
-    local workers=$1
-    local py_script=$2
+    # func_paral_process  <cmd> <script> <infile> <outfile> <workers> <options>
+    # cmd: bash/python/perl.../func;
+    local cmd=$1
+    local script=$2
     local infile=$3
     local outfile=$4
-    shift 4 # Remove the first four parameters
+    local workers=$5
+    shift 5 # Remove the first four parameters
     local optional=$@ # Accepts arguments of any length
-#    local optional=${5:-""}
+    #local optional=${5:-""}
+
+    # when use shell function ,let cmd=func, it will be replaced with "" automaticly.
+    if [ "$cmd"x == "func"x ];then
+        cmd=""
+    fi
+
     # 1.shard [infile->infile.idx]
     func_shard $workers $infile
 
@@ -52,7 +61,7 @@ function func_paral_process(){
     do
       (
       echo "----------------------processing shard: ${i}.----------------------"
-      python $py_script $infile.${i} $infile.tmp.${i} $optional
+      $cmd $script $infile.${i} $infile.tmp.${i} $optional
       rm $infile.${i}
       )&
     done
