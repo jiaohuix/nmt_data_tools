@@ -13,5 +13,6 @@ import sentencepiece as spm
 
 
 if __name__ == "__main__":
+    # https://github.com/facebookresearch/fairseq/blob/a24880bd10f3c3101b3bc993947ef92a83f1ad4f/examples/translation/prepare-iwslt17-multilingual.sh#L100-L126
     print("cmd: python nmt_data_tools/my_tools/spm_train.py  --input=datasets/raw/train.zh --model_prefix=spm.16k.model --vocab_size=16000 --character_coverage=1 --model_type=bpe")
     spm.SentencePieceTrainer.Train(" ".join(sys.argv[1:]))

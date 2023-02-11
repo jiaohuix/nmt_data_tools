@@ -90,7 +90,7 @@ function build_vocab_parallel() {
     python $mtools/json2dict.py ${outfolder}/tmp.${src}.json  ${outfolder}/dict.${src}.txt  $freq
     python $mtools/json2dict.py ${outfolder}/tmp.${tgt}.json  ${outfolder}/dict.${tgt}.txt  $freq
 
-#    rm ${outfolder}/tmp.*
+    rm ${outfolder}/tmp.*
     echo "src and tgt bpe file already learned."
 
 }
