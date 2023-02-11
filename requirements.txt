@@ -10,3 +10,4 @@ zhconv
 pythainlp
 annoy
 simhash
+sentencepiece
