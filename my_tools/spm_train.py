@@ -13,4 +13,5 @@ import sentencepiece as spm
 
 
 if __name__ == "__main__":
+    print("cmd: python nmt_data_tools/my_tools/spm_train.py  --input=datasets/raw/train.zh --model_prefix=spm.16k.model --vocab_size=16000 --character_coverage=1 --model_type=bpe")
     spm.SentencePieceTrainer.Train(" ".join(sys.argv[1:]))
