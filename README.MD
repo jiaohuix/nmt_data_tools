@@ -33,6 +33,7 @@ cd nmt_data_tools
 - [17.ngram纠错 ](#17)
 - [18. MUSE多语言词典](#18)
 - [19.Annoy加速相似向量查找](#19)
+- [21. bpe dropout](#20)
 
 <a id="1"></a>
 
@@ -771,5 +772,22 @@ tail -n +8001 data/zh-ar.txt > data/zh-ar.eval.txt
 
 # align zh-ar in a common space
 python supervised.py --src_lang zh --tgt_lang ar --src_emb data/wiki.zh.vec --tgt_emb data/wiki.multi.ar.vec --n_refinement 5 --dico_train data/zh-ar.train.txt --dico_eval data/zh-ar.eval.txt
+```
+
+
+
+<a id="21"></a>
+
+### 21 bpe dropout
+
+[BPE-Dropout](https://github.com/VProv/BPE-Dropout)是一种简单的子词正则化方法，它随机破坏 BPE 的分割过程，导致在同一个固定 BPE 框架内产生多个分割。与 BPE 相比，在训练期间使用 BPE-dropout 和在推理期间使用标准 BPE 可将翻译质量提高高达 2.3 BLEU
+
+```shell
+# 单核
+python my_tools/bpe_dropout.py <infile> <outfile> <bpecode> <num_iter=5>(opt) <drop_rate=0.1>(opt)
+# 多核
+bash my_tools/apply_bpedrop_paral.sh <infile> <outfile> <bpe_code> <workers=4>(opt) <num_iter=5>(opt) <drop_rate=0.1>(opt)
+# example
+bash my_tools/apply_bpedrop_paral.sh  data/train.en data/train.bpe.en data/codes.bep.en  4 5 0.1
 ```
 
