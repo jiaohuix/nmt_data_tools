@@ -1,6 +1,4 @@
-
-
-## 角灰的文本工具箱
+角灰的文本工具箱
 
 下载并安装依赖：
 
@@ -33,7 +31,10 @@ cd nmt_data_tools
 - [17.ngram纠错 ](#17)
 - [18. MUSE多语言词典](#18)
 - [19.Annoy加速相似向量查找](#19)
-- [21. bpe dropout](#20)
+- [21. bpe dropout](#21)
+- [22. 可视化：len-bleu](#22)
+
+
 
 <a id="1"></a>
 
@@ -778,6 +779,8 @@ python supervised.py --src_lang zh --tgt_lang ar --src_emb data/wiki.zh.vec --tg
 
 <a id="21"></a>
 
+
+
 ### 21 bpe dropout
 
 [BPE-Dropout](https://github.com/VProv/BPE-Dropout)是一种简单的子词正则化方法，它随机破坏 BPE 的分割过程，导致在同一个固定 BPE 框架内产生多个分割。与 BPE 相比，在训练期间使用 BPE-dropout 和在推理期间使用标准 BPE 可将翻译质量提高高达 2.3 BLEU
@@ -791,3 +794,25 @@ bash my_tools/apply_bpedrop_paral.sh <infile> <outfile> <bpe_code> <workers=4>(o
 bash my_tools/apply_bpedrop_paral.sh  data/train.en data/train.bpe.en data/codes.bep.en  4 5 0.1
 ```
 
+
+
+<a id="22"></a>
+
+### 22. 可视化：len-bleu
+
+​      在字节关于篇章机器翻译的工作[Rethinking Document-level Neural Machine Translation](https://aclanthology.org/2022.findings-acl.279.pdf)中提出在不修改网络结构，改变训练方法就能达到很好效果。具体的，把长的篇章按不同分解度等分为若干份，如篇章有16句，则分别分为{1，2，4，8}组，每组分别有16、8、4、2句，将这些不同粒度的语料对混合训练。实验结果显示该方法能显著提升长句的分数，并且在短句上的分数也比句子级翻译模型更好：
+
+![VW4VN_ZY2__HK_LG8_1M3~9.png](https://s1.locimg.com/2023/02/28/4d1bb733d4847.png)
+
+为了方便画图，于是有：
+
+```shell
+# --tags --ref --out  hypos*
+python visual/len_bleu4.py -t "epoch10,epoch50" -r data/ref.txt -o bleu_len.png data/hypo10.txt data/hypo50.txt
+```
+
+![bleu_len.png ](https://s1.locimg.com/2023/02/28/baa24778607e0.png)
+
+PS: 颜色就懒得换了。此外，发现一个超好用的画图包：[compare-mt](https://github.com/neulab/compare-mt),可以全面分析不同系统的翻译效果差异。
+
+23/2/28
