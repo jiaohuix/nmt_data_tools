@@ -26,15 +26,14 @@ cd nmt_data_tools
 - [12. nmt数据处理 ](#12)
 - [13. moses后处理 ](#13)
 - [14.fast_align抽取词典 ](#14)
-- [15. 随即对齐替换(RAS) ](#15)
+- [15. 随机对齐替换(RAS) ](#15)
 - [16.中文乱码过滤 ](#16)
 - [17.ngram纠错 ](#17)
 - [18. MUSE多语言词典](#18)
 - [19.Annoy加速相似向量查找](#19)
 - [21. bpe dropout](#21)
 - [22. 可视化：len-bleu](#22)
-
-
+- [23. 相似句子查找(LASER编码)](#23)
 
 <a id="1"></a>
 
@@ -516,9 +515,9 @@ stop words:
 
 <a id="15"></a>
 
-### 15.RAS
+### 15.随机对齐替换(RAS) 
 
-随机对齐替换。用词典将source的词典词按一定几率替换为其他语言的同义词。
+随机对齐替换, mRASP翻译模型使用该方法进行预训练，用词典将source的词典词按一定几率替换为其他语言的同义词。
 
 ```
 python my_tools/replace_word_bilingual.py --langs de;en --dict-path dic --data-path data  --prefix train --num-repeat 1 --moses-detok --replace-prob 0.3 --vocab-size 1000
@@ -533,7 +532,7 @@ tree:
 
 python nmt_data_tools/my_tools/replace_word_bilingual.py --langs de;en --dict-path dic --data-path data --num-repeat 1 --moses-detok --replace-prob 0.3 --vocab-size 1000
 
-**完整文档和demo参考[ras_sample](./ras_sample/README.md)**
+**完整文档和demo参考[ras_sample](./examples/ras_sample/README.md)**
 
 
 
@@ -814,5 +813,15 @@ python visual/len_bleu4.py -t "epoch10,epoch50" -r data/ref.txt -o bleu_len.png 
 ![bleu_len.png ](https://s1.locimg.com/2023/02/28/baa24778607e0.png)
 
 PS: 颜色就懒得换了。此外，发现一个超好用的画图包：[compare-mt](https://github.com/neulab/compare-mt),可以全面分析不同系统的翻译效果差异。
+
+23/2/28
+
+
+
+<a id="23"></a>
+
+### 23. 相似句子查找(LASER编码)
+
+见 [laser](./python search/laser/README.md)
 
 23/2/28
