@@ -822,6 +822,6 @@ PS: 颜色就懒得换了。此外，发现一个超好用的画图包：[compar
 
 ### 23. 相似句子查找(LASER编码)
 
-见 [laser](./python search/laser/README.md)
+见 [laser](./search/laser/README.md)
 
 23/2/28
