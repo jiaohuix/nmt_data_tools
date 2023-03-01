@@ -72,6 +72,8 @@ sed -i "s|model_dir=\"\"|model_dir=${LASER}/models|g"  tasks/embed/embed.sh
 
 以nmt_data_tools/data/train.zh为例，随机划分400条作为database，100条为query，使用laser编码：
 
+PS: 可以把源和目标语拼在一起联合编码，从而提高向量搜索的准确度。
+
 ```shell
 # cmd: bash tasks/embed/embed.sh infile  out_bin_file
 
