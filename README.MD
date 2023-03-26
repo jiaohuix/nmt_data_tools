@@ -363,6 +363,15 @@ seed=1
 shuf --random-source=<(yes $seed) train.src > train.shuf.src
 shuf --random-source=<(yes $seed) train.src > train.shuf.tgt
 ```
+或者合并文件后shuf，再拆分：
+注：paste的分隔符d只能用一个字符，多个字符拼接使用该命令：paste -d '@@@' file1 /dev/null /dev/null file2
+
+```shell
+paste -d '@@@' train.src /dev/null /dev/null train.tgt | shuf > train.all
+# 取低1列
+cat train.all | awk -F'@@@' '{print $1}' > train.src 
+cat train.all | awk -F'@@@' '{print $2}' > train.tgt 
+```
 
 ```shell
 # 1.command:
