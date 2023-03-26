@@ -368,7 +368,7 @@ shuf --random-source=<(yes $seed) train.src > train.shuf.tgt
 
 ```shell
 paste -d '@@@' train.src /dev/null /dev/null train.tgt | shuf > train.all
-# 取低1列
+# 取第1列
 cat train.all | awk -F'@@@' '{print $1}' > train.src 
 cat train.all | awk -F'@@@' '{print $2}' > train.tgt 
 ```
