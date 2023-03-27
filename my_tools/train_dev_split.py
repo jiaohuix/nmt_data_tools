@@ -33,12 +33,13 @@ def shuffle(res,dev_len,seed=1):
 
 if __name__ == '__main__':
     # params
-    assert len(sys.argv)==6,f"usage: python {sys.argv[0]} <src-lang> <tgt-lang> <inprefix> <outfolder> <dev len>"
+    assert len(sys.argv)>=6,f"usage: python {sys.argv[0]} <src-lang> <tgt-lang> <inprefix> <outfolder> <dev len> <seed=1>(opt)"
     src_lang=sys.argv[1]
     tgt_lang=sys.argv[2]
     data_prefix=sys.argv[3]
     out_folder=sys.argv[4]
     dev_len=float(sys.argv[5])
+    seed = int(sys.argv[7]) if len(sys.argv)>6 else 1
     # file
     src_file=f"{data_prefix}.{src_lang}"
     tgt_file=f"{data_prefix}.{tgt_lang}"
@@ -46,7 +47,7 @@ if __name__ == '__main__':
         os.makedirs(out_folder)
     # split
     res=read_text_pair(src_file=src_file,tgt_file=tgt_file)
-    train_set,dev_set=shuffle(res,dev_len=dev_len)
+    train_set,dev_set=shuffle(res,dev_len=dev_len, seed=seed)
     # write
     write_file(res=[data[0]+"\n" for data in train_set],file=os.path.join(out_folder,f"train.{src_lang}"))
     write_file(res=[data[1]+"\n" for data in train_set],file=os.path.join(out_folder,f"train.{tgt_lang}"))
