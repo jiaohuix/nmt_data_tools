@@ -39,7 +39,7 @@ if __name__ == '__main__':
     data_prefix=sys.argv[3]
     out_folder=sys.argv[4]
     dev_len=float(sys.argv[5])
-    seed = int(sys.argv[7]) if len(sys.argv)>6 else 1
+    seed = int(sys.argv[6]) if len(sys.argv)>6 else 1
     # file
     src_file=f"{data_prefix}.{src_lang}"
     tgt_file=f"{data_prefix}.{tgt_lang}"
