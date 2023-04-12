@@ -7,7 +7,7 @@
 faiss针对高维空间中的海量数据（稠密向量），提供了高效且可靠的相似性聚类和检索方法，可支持十亿级别向量的搜索，是目前最为成熟的近似近邻搜索库。
 
 ```shell
-git clone https://github.com/MiuGod0126/nmt_data_tools.git
+git clone https://github.com/jiaohuix/nmt_data_tools.git
 export TOOLS=$PWD/nmt_data_tools/
 cd nmt_data_tools
 
