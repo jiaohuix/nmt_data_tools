@@ -34,6 +34,7 @@ cd nmt_data_tools
 - [21. bpe dropout](#21)
 - [22. 可视化：len-bleu](#22)
 - [23. 相似句子查找(LASER编码)](#23)
+- [24. TextPruner](#24)
 
 <a id="1"></a>
 
@@ -831,6 +832,20 @@ PS: 颜色就懒得换了。此外，发现一个超好用的画图包：[compar
 
 ### 23. 相似句子查找(LASER编码)
 
-见 [laser](./search/laser/README.md)
+见 [search/laser](./search/laser/README.md)
 
 23/2/28
+
+
+
+<a id="24"></a>
+
+### 24.TextPruner
+
+**[TextPruner](https://github.com/airaria/TextPruner)**是由HFL开发的用于预训练语言模型的模型裁剪的工具包，可以通过词表裁剪、结构裁剪来减少冗余神经元，加快模型训练推理速度。（用于裁剪transformers的模型）
+
+本节记录下用TextPruner对mbert进行词表裁剪，保留2种语言以适应双向翻译任务。
+
+见[examples\vocab_prune](examples\vocab_prune/README.md)
+
+23/4/19
