@@ -3,7 +3,7 @@
 下载并安装依赖：
 
 ```shell
-git clone https://github.com/MiuGod0126/nmt_data_tools.git
+git clone https://github.com/jiaohuix/nmt_data_tools.git
 # 设置环境变量
 export TOOLS=$PWD/nmt_data_tools/
 pip install -r nmt_data_tools/requirements.txt
