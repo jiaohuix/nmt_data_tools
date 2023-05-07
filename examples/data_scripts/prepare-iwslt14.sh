@@ -3,7 +3,7 @@
 # Adapted from https://github.com/facebookresearch/MIXER/blob/master/prepareData.sh
 
 
-echo 'Cloning Subword nmt_data_tools repository ...'
+#echo 'Cloning Subword nmt_data_tools repository ...'
 #git clone https://github.com/MiuGod0126/nmt_data_tools.git
 pip install subword-nmt
 
@@ -33,7 +33,9 @@ mkdir -p $orig $tmp $prep
 
 echo "Downloading data from ${URL}..."
 cd $orig
-wget "$URL"
+if [ ! -e $GZ ];then
+    wget "$URL"
+fi
 
 if [ -f $GZ ]; then
     echo "Data successfully downloaded."
