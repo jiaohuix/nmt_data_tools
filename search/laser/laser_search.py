@@ -71,6 +71,13 @@ def vec_sim_parser():
     )
 
     parser.add_argument(
+    "--dim",
+    default=1024,
+    type=int,
+    help="dimension.",
+    )
+        
+    parser.add_argument(
         "-o",
         "--outprefix",
         default="",
@@ -83,8 +90,7 @@ def vec_sim_parser():
     return parser
 
 
-def load_laser_vec(vec_file):
-    dim = 1024
+def load_bin_vec(vec_file, dim=1024):
     X = np.fromfile(vec_file, dtype=np.float32, count=-1)
     X.resize(X.shape[0] // dim, dim)  # [bsz,dim]
     return X
@@ -125,8 +131,8 @@ if __name__ == '__main__':
     parser = vec_sim_parser()
     args = parser.parse_args()
 
-    vec_database = load_laser_vec(args.database)
-    vec_query = load_laser_vec(args.query)
+    vec_database = load_bin_vec(args.database, args.dim)
+    vec_query = load_bin_vec(args.query, args.dim)
     indexer = build_indexer(args,vec_database)
 
     # search
