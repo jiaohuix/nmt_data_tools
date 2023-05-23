@@ -40,7 +40,7 @@ def idx2token_map(idx_map,nmt_idx2token,bert_idx2token):
 
 
 if __name__ == '__main__':
-    assert len(sys.argv) == 3, f"usage: python {sys.argv[0]} <bert_dict> <nmt_dict> <idx_map_file>"
+    assert len(sys.argv) == 4, f"usage: python {sys.argv[0]} <bert_dict> <nmt_dict> <idx_map_file>"
     bert_dict = sys.argv[1]
     nmt_dict = sys.argv[2]
     idx_map_file = sys.argv[3]

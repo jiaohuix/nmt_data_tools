@@ -109,3 +109,6 @@ python nmt_data_tools/examples/vocab_map/idx2token_map.py iwslt14.tokenized.de-e
 
 
 ## 6.去除冗余
+
+去掉能从roberta词表直接能找到的。
+
