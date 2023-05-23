@@ -153,4 +153,4 @@ if __name__ == '__main__':
     # save
     np.savetxt(args.outprefix + ".dist", D, fmt='%.3f', delimiter='\t')
     np.savetxt(args.outprefix + ".idx", I, fmt='%d', delimiter='\t')
-    write_json(idxs_map, file=f"{args.outprefix}.idx.json")
+    write_json(idxs_map, file="idx_map.json")
