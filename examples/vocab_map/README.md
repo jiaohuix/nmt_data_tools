@@ -95,7 +95,7 @@ python nmt_data_tools/search/laser/laser_search.py -d roberta.bin -q fairseq.bin
 ```shell
 # <bert_dict> <nmt_dict> <idx_map_file>
 python nmt_data_tools/examples/vocab_map/idx2token_map.py iwslt14.tokenized.de-en/dict.txt dict.txt   idx_map.json
-# 输出token_map.json
+# 输出token_map.json， new_idx_map.json√， new_token_map.json（new是保留1v1映射）
 '''
 {',': [',', '--', 'ãģ®é'],
  '.': ['.', ',', 'ItemTracker'],
@@ -108,7 +108,7 @@ python nmt_data_tools/examples/vocab_map/idx2token_map.py iwslt14.tokenized.de-e
 
 
 
-## 6.去除冗余
+2023/5/23
 
-去掉能从roberta词表直接能找到的。
+
 

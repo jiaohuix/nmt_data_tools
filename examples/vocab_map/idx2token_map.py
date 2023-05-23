@@ -30,13 +30,24 @@ def read_vocab_map(file):
     return vocab_map
 
 
-def idx2token_map(idx_map,nmt_idx2token,bert_idx2token):
+def idx2token_map(idx_map,nmt_idx2token,bert_idx2token,bert_vocab):
   token_map = {}
+  new_idx_map ={}
+  new_token_map ={}
   for idx,sim_idxs in idx_map.items():
     token = nmt_idx2token[int(idx)]
     sim_tokens = [bert_idx2token[int(idx)] for idx in sim_idxs]
     token_map[token] = sim_tokens
-  return token_map
+    # 过滤
+    if token in bert_vocab.keys():
+        bert_idx = bert_vocab[token]
+        new_idx_map[str(idx)] = [str(bert_idx)]
+        new_token_map[token] = [token]
+    else:
+        new_idx_map[str(idx)] = sim_idxs
+        new_token_map[token] = sim_tokens
+
+  return token_map, new_idx_map, new_token_map
 
 
 if __name__ == '__main__':
@@ -48,6 +59,8 @@ if __name__ == '__main__':
     bert_vocab, bert_idx2token = load_vocab(bert_dict)
     nmt_vocab, nmt_idx2token = load_vocab(nmt_dict)
     idx_map = read_vocab_map(idx_map_file)
-    token_map = idx2token_map(idx_map, nmt_dict, bert_dict)
+    token_map, new_idx_map, new_token_map = idx2token_map(idx_map, nmt_idx2token, bert_idx2token,bert_vocab)
     write_json(token_map, "token_map.json")
+    write_json(new_idx_map, "new_idx_map.json")
+    write_json(new_token_map, "new_token_map.json")
 
