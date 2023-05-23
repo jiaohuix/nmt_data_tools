@@ -17,7 +17,7 @@ def load_vocab(file, remove_bpe=True):
 def write_json(worddict,file):
     with open(file, 'w', encoding='utf-8') as f:
         json.dump(worddict, f, indent=2, ensure_ascii=False) # 这里indent是缩进的意思一般写为4 或者2
-    print(f"write to file {file} success.")
+    print(f"write to file {file} success, total {len(worddict)} lines.")
 
 def read_vocab_map(file):
     if not os.path.exists(file):
