@@ -2,13 +2,16 @@ import sys
 import os
 import json
 import numpy as np
-def load_vocab(file, remove_bpe=True):
+def load_vocab(file, remove_bpe=False):
     vocab = {}
     idx2token = {}
     with open(file, 'r', encoding='utf-8') as f:
         for idx, line in enumerate(f.readlines()):
             line = line.strip()
             if remove_bpe:
+                # 未去除bpe的也要加
+                vocab[line] = idx
+                idx2token[idx] = line
                 line = line.replace("@@", "")
             vocab[line] = idx
             idx2token[idx] = line
@@ -36,6 +39,7 @@ def idx2token_map(idx_map,nmt_idx2token,bert_idx2token,bert_vocab):
   new_token_map ={}
   for idx,sim_idxs in idx_map.items():
     token = nmt_idx2token[int(idx)]
+    token = token.replace("@@","")
     sim_tokens = [bert_idx2token[int(idx)] for idx in sim_idxs]
     token_map[token] = sim_tokens
     # 过滤
@@ -56,7 +60,7 @@ if __name__ == '__main__':
     nmt_dict = sys.argv[2]
     idx_map_file = sys.argv[3]
 
-    bert_vocab, bert_idx2token = load_vocab(bert_dict)
+    bert_vocab, bert_idx2token = load_vocab(bert_dict, remove_bpe=True)
     nmt_vocab, nmt_idx2token = load_vocab(nmt_dict)
     idx_map = read_vocab_map(idx_map_file)
     token_map, new_idx_map, new_token_map = idx2token_map(idx_map, nmt_idx2token, bert_idx2token,bert_vocab)
