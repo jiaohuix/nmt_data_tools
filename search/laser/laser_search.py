@@ -1,11 +1,13 @@
 '''
-功能：从向量库database搜索与query相近的topk的距离dist和索引idx (database和query都是laser编码的二值文件)
+功能：从向量库database搜索与query相近的topk的距离dist和索引idx (database和query都是laser编码的二值文件);
+修改：返回json，记录新词表对应旧词表的topk个索引和token
 eg: python laser_search.py -d valid.en.bin -q test.en.bin -o test.en  -k 2 -b 512  --index FLAT --nlist 100
 '''
 import sys
 import os
 import numpy as np
 import faiss
+import json
 import argparse
 import time
 from tqdm import tqdm
@@ -17,6 +19,7 @@ logging.basicConfig(
     level=os.environ.get("LOGLEVEL", "INFO").upper(),
 )
 logger = logging.getLogger("laser_sim_search")
+
 
 def vec_sim_parser():
     parser = argparse.ArgumentParser("Vec Sim.")
@@ -42,7 +45,7 @@ def vec_sim_parser():
         "--index",
         default="FLAT",
         type=str,
-        choices=["FLAT","IVF"],
+        choices=["FLAT", "IVF"],
         help="bin.",
     )
 
@@ -71,12 +74,12 @@ def vec_sim_parser():
     )
 
     parser.add_argument(
-    "--dim",
-    default=1024,
-    type=int,
-    help="dimension.",
+        "--dim",
+        default=1024,
+        type=int,
+        help="dimension.",
     )
-        
+
     parser.add_argument(
         "-o",
         "--outprefix",
@@ -85,7 +88,7 @@ def vec_sim_parser():
         help="out prefix, output: outprefix.score outprefix.idx",
     )
 
-    parser.add_argument("--gpu", action="store_true",help="weather to use gpu.")
+    parser.add_argument("--gpu", action="store_true", help="weather to use gpu.")
 
     return parser
 
@@ -95,7 +98,13 @@ def load_bin_vec(vec_file, dim=1024):
     X.resize(X.shape[0] // dim, dim)  # [bsz,dim]
     return X
 
-def build_indexer(args, vectors): # 还要试试IVF的
+def write_json(worddict,file):
+    with open(file, 'w', encoding='utf-8') as f:
+        json.dump(worddict, f, indent=2, ensure_ascii=False)
+    print(f"write to file {file} success.")
+
+
+def build_indexer(args, vectors):  # 还要试试IVF的
     # faiss: https://github.com/facebookresearch/faiss/blob/main/tutorial/python/4-GPU.py
     dims = vectors.shape[-1]
     indexer = faiss.IndexFlatL2(dims)  # build a flat (CPU) index
@@ -120,8 +129,8 @@ def batch_search(args, indexer, vec_query):
     Dist_ls, idx_ls = [], []
     for query in tqdm(vec_query_ls):
         D, I = indexer.search(query, args.topk)
-        Dist_ls.append(D.reshape([-1,args.topk]))
-        idx_ls.append(I.reshape([-1,args.topk]))
+        Dist_ls.append(D.reshape([-1, args.topk]))
+        idx_ls.append(I.reshape([-1, args.topk]))
     D = np.vstack(Dist_ls)
     I = np.vstack(idx_ls)
     return D, I
@@ -133,11 +142,15 @@ if __name__ == '__main__':
 
     vec_database = load_bin_vec(args.database, args.dim)
     vec_query = load_bin_vec(args.query, args.dim)
-    indexer = build_indexer(args,vec_database)
+    indexer = build_indexer(args, vec_database)
 
     # search
-    D,I = batch_search(args, indexer, vec_query)
+    D, I = batch_search(args, indexer, vec_query)
+    idxs_map = {}
+    for idx, sim_idxs in enumerate(I):
+        idxs_map[str(idx)] = [str(idx) for idx in sim_idxs.tolist()]
 
     # save
-    np.savetxt(args.outprefix+".dist", D,fmt='%.3f', delimiter='\t')
-    np.savetxt(args.outprefix+".idx", I,fmt='%d', delimiter='\t')
+    np.savetxt(args.outprefix + ".dist", D, fmt='%.3f', delimiter='\t')
+    np.savetxt(args.outprefix + ".idx", I, fmt='%d', delimiter='\t')
+    write_json(idxs_map, file=f"{args.outprefix}.idx.json")
