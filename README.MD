@@ -802,6 +802,20 @@ bash my_tools/apply_bpedrop_paral.sh <infile> <outfile> <bpe_code> <workers=4>(o
 # example
 bash my_tools/apply_bpedrop_paral.sh  data/train.en data/train.bpe.en data/codes.bep.en  4 5 0.1
 ```
+使用bpe dropout会有分词失败的情况，会返回文本“ErrorTokenize”,需要用grep -v "ErrorTokenize" 过滤，以data/train为例：
+```shell
+# 使用各自的bpe code（这里都用en的），num_iter=3 drop_rate=0.1
+python nmt_data_tools/my_tools/bpe_dropout.py data/train.zh  data/tmp.zh data/codes.bpe.en  3 0.1
+python nmt_data_tools/my_tools/bpe_dropout.py data/train.en  data/tmp.en data/codes.bpe.en  3 0.1
+
+# 去除空行
+paste data/tmp.zh data/tmp.en > data/tmp
+grep -v "ErrorTokenize" data/tmp > data/tmp.ok
+cut -f 1  data/tmp.ok >  data/train.drop.zh
+cut -f 2  data/tmp.ok >  data/train.drop.en
+rm data/tmp*
+# 数据会翻num_iter倍，这里是500*3=1500
+```
 
 
 
