@@ -152,7 +152,7 @@ def tokenize_text(rules, line, dropout=0.0, random_generator=np.random.RandomSta
         return ' '.join(
             [' '.join(tokenize_word(rules, word, dropout, random_generator, **args)) for word in line.split(' ')])
     except:
-        return ""
+        return "ErrorTokenize"
 
 class BpeOnlineTokenizer:
     """
