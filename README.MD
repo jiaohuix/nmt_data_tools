@@ -805,6 +805,7 @@ bash my_tools/apply_bpedrop_paral.sh  data/train.en data/train.bpe.en data/codes
 使用bpe dropout会有分词失败的情况，会返回文本“ErrorTokenize”,需要用grep -v "ErrorTokenize" 过滤，以data/train为例：
 ```shell
 # 使用各自的bpe code（这里都用en的），num_iter=3 drop_rate=0.1
+cp -r nmt_data_tools/data .
 python nmt_data_tools/my_tools/bpe_dropout.py data/train.zh  data/tmp.zh data/codes.bpe.en  3 0.1
 python nmt_data_tools/my_tools/bpe_dropout.py data/train.en  data/tmp.en data/codes.bpe.en  3 0.1
 
@@ -815,6 +816,9 @@ cut -f 1  data/tmp.ok >  data/train.drop.zh
 cut -f 2  data/tmp.ok >  data/train.drop.en
 rm data/tmp*
 # 数据会翻num_iter倍，这里是500*3=1500
+head data/train.drop.en 
+#We chan@@ g@@ ed the mode@@ l@@ ing un@@ it f@@ r@@ o@@ m pre@@ vi@@ ous Chinese charac@@ ter u@@ n@@ it to the cu@@ r@@ ren@@ t high@@ -@@ f@@ re@@ qu@@ enc@@ y ph@@ o@@ ne@@ me un@@ it.
+#W@@ e chan@@ g@@ ed t@@ he model@@ ing un@@ it f@@ r@@ o@@ m pre@@ vi@@ ous Chinese charac@@ ter un@@ it to th@@ e curren@@ t high@@ -@@ f@@ re@@ qu@@ enc@@ y ph@@ o@@ ne@@ me un@@ it@@ .
 ```
 
 
