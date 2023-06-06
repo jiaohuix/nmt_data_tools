@@ -2,6 +2,7 @@
 import heapq
 import numpy as np
 import sys
+from tqdm import tqdm
 
 def load_subword_nmt_table(path):
     """
@@ -224,7 +225,7 @@ def process():
         merge_table=merge_table)
 
     res = []
-    for line in lines:
+    for line in tqdm(lines):
         line = line.strip()
         for i in range(num_iter):
             new_sent = subword_nmt_tokenizer(line,
