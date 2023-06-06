@@ -148,9 +148,11 @@ def tokenize_word(merge_rules, word, dropout=0.0,
 
 
 def tokenize_text(rules, line, dropout=0.0, random_generator=np.random.RandomState(), **args):
-    return ' '.join(
-        [' '.join(tokenize_word(rules, word, dropout, random_generator, **args)) for word in line.split(' ')])
-
+    try:
+        return ' '.join(
+            [' '.join(tokenize_word(rules, word, dropout, random_generator, **args)) for word in line.split(' ')])
+    except:
+        return ""
 
 class BpeOnlineTokenizer:
     """
